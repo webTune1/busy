@@ -2,920 +2,752 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Bubble Royale — Responsive & Enhanced (Day/Night, Abilities, 100+ Levels)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Arcade Hub — Bubble + Racing Demo</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-dark-0:#071322; --bg-dark-1:#0b2030;
-    --bg-light-0:#f6f8fa; --bg-light-1:#e9eef6;
-    --muted-dark:#9fb0c7; --muted-light:#475569;
+    --bg:#071029;
+    --panel:#081426;
+    --muted:#9fb0c7;
     --accent:#ffb86b;
+    --danger:#ef4444;
+    --success:#10b981;
     --glass: rgba(255,255,255,0.03);
-    --panel-dark: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    --panel-light: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
-    --success:#10b981; --danger:#ef4444;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;-webkit-font-smoothing:antialiased}
-  body.theme-dark{
-    background: radial-gradient(800px 400px at 10% 10%, rgba(255,184,107,0.03), transparent), linear-gradient(180deg,var(--bg-dark-0),var(--bg-dark-1));
-    color:#e6eef8;
-  }
-  body.theme-light{
-    background: linear-gradient(180deg,var(--bg-light-0),var(--bg-light-1));
-    color:#0b1220;
-  }
-  .app{max-width:1200px;margin:18px auto;padding:16px;border-radius:14px;background:var(--panel-dark);box-shadow:0 18px 50px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.03)}
-  body.theme-light .app{background:var(--panel-light);box-shadow:0 10px 28px rgba(2,6,23,0.06);border:1px solid rgba(0,0,0,0.04)}
-  header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  /* Page */
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;background:linear-gradient(180deg,#041026,#07112a);color:#e6eef8;-webkit-font-smoothing:antialiased}
+  .app{max-width:1200px;margin:16px auto;padding:16px;border-radius:12px;background:var(--card);box-shadow:0 18px 50px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
   .logo{display:flex;align-items:center;gap:10px}
   .logo .icon{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#ffb86b,#ff7b7b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#081022}
   h1{margin:0;font-size:18px}
-  .muted{color:var(--muted-dark);font-size:13px}
-  body.theme-light .muted{color:var(--muted-light)}
+  .muted{color:var(--muted);font-size:13px}
   .layout{display:flex;gap:14px}
   .left{flex:1;min-width:320px}
-  .right{width:340px}
-  .panel{padding:12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.02)}
-  .canvasWrap{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#05202b,#02121a);display:flex;align-items:center;justify-content:center;padding:10px}
-  body.theme-light .canvasWrap{background:linear-gradient(180deg,#f3f7fb,#eaf3ff)}
+  .right{width:320px}
+  .panel{background:transparent;padding:12px;border-radius:12px}
+  /* Canvas container */
+  .gameWrap{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#071822,#02121a);display:flex;align-items:center;justify-content:center;padding:12px}
   canvas{display:block;width:100%;height:auto;border-radius:8px;background:transparent}
-  .hud{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
-  .badge{background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:10px;color:var(--muted-dark);font-weight:600}
-  body.theme-light .badge{background:rgba(0,0,0,0.03);color:var(--muted-light)}
-  .big{font-size:18px;color:var(--accent);font-weight:700}
-  .controls{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
-  .ability{display:flex;flex-direction:column;align-items:center;gap:6px}
-  .ability button{width:120px}
+  /* HUD */
+  .hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .stat{background:rgba(255,255,255,0.02);padding:8px 10px;border-radius:10px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-start}
+  .stat strong{color:var(--accent);font-size:16px}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
   button{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:8px 12px;border-radius:10px;cursor:pointer}
-  button.ghost{background:transparent;color:var(--muted-dark);border:1px dashed rgba(255,255,255,0.03)}
-  .levelProgress{height:10px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden}
-  .levelBar{height:100%;background:linear-gradient(90deg,#ffb86b,#ff7b7b);width:0%}
-  .controls .hint{font-size:12px;color:var(--muted-dark)}
-  .center{text-align:center}
-  .instructions{font-size:13px;color:var(--muted-dark);margin-top:8px}
-  .deviceMode{display:flex;gap:6px}
+  button.ghost{background:transparent;color:var(--muted);border:1px dashed rgba(255,255,255,0.03)}
   .small{padding:6px 8px;font-size:13px;border-radius:8px}
-  .nextQueue{display:flex;gap:6px;align-items:center}
-  .nextBall{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.04)}
-  .dayToggle{cursor:pointer;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent}
-  @media (max-width:980px){ .layout{flex-direction:column} .right{width:100%} .nextBall{width:38px;height:38px} }
+  .mutedSmall{color:var(--muted);font-size:12px}
+  .center{text-align:center}
+  /* Mobile responsiveness */
+  @media (max-width:900px){ .layout{flex-direction:column} .right{width:100%} }
+  /* Simple on-canvas UI overlays (for small icons) */
+  .overlayUI{position:absolute;left:12px;top:12px;display:flex;gap:8px;z-index:5}
+  .overlayUI .chip{background:rgba(0,0,0,0.25);padding:6px 8px;border-radius:8px;color:#fff;font-weight:600}
+  .footer{margin-top:12px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between}
+  /* touch control hint */
+  .touchHint{display:none}
+  @media (max-width:720px){ .touchHint{display:block;color:var(--muted);font-size:13px;margin-top:8px} }
 </style>
 </head>
-<body class="theme-dark">
-<div class="app" role="application" aria-label="Bubble Shooter - Enhanced">
+<body>
+<div class="app" role="application" aria-label="Arcade Hub with Racing">
   <header>
     <div class="logo">
-      <div class="icon">BR</div>
+      <div class="icon">AH</div>
       <div>
-        <h1>Bubble Royale — Enhanced</h1>
-        <div class="muted">Responsive canvas, clearer aim, abilities (Wild / Fire / Ice), day/night & device modes</div>
+        <h1>Arcade Hub — Racing Demo</h1>
+        <div class="muted">Top-down responsive car racing mini-game (collect coins, fuel, health, magnet). One file: HTML/CSS/JS.</div>
       </div>
     </div>
-
     <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      <div class="muted deviceMode">
-        <label class="muted">Mode:</label>
-        <select id="deviceMode" class="small" title="Change UI scale for device">
-          <option value="auto">Auto</option>
-          <option value="desktop">Desktop</option>
-          <option value="tablet">Tablet</option>
-          <option value="mobile">Mobile</option>
-        </select>
-      </div>
-
-      <div class="dayToggle" id="dayToggle" title="Toggle Day / Night" aria-pressed="false">🌙</div>
-      <div class="badge">Level: <span id="uiLevel" class="big">1</span></div>
-      <div class="badge">Score: <span id="uiScore" class="big">0</span></div>
+      <div class="muted">Mode</div>
+      <select id="device" class="small" title="UI scale for device">
+        <option value="auto">Auto</option>
+        <option value="desktop">Desktop</option>
+        <option value="tablet">Tablet</option>
+        <option value="mobile">Mobile</option>
+      </select>
     </div>
   </header>
 
   <div class="layout">
-    <div class="left">
-      <div class="panel canvasWrap" id="gamePanel" style="padding:8px">
-        <canvas id="gameCanvas" width="720" height="900" aria-label="Game canvas"></canvas>
-        <div id="overlay" style="position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none"></div>
+    <div class="left panel">
+      <div class="gameWrap" id="gameWrap">
+        <canvas id="raceCanvas" width="720" height="900" aria-label="Racing canvas"></canvas>
+        <div class="overlayUI">
+          <div class="chip" id="levelChip">Level 1</div>
+          <div class="chip" id="speedChip">Speed: 1.0x</div>
+        </div>
       </div>
 
-      <div class="hud">
-        <div class="badge">Next:</div>
-        <div class="nextQueue" id="nextQueue"></div>
-        <div class="badge">Shots: <span id="uiShots">0</span></div>
-        <div style="margin-left:auto" class="muted">Aim: drag/touch or move mouse. Click / Tap to shoot. Keys: Space = shoot, 1 = Wild, 2 = Fire, 3 = Ice</div>
+      <div class="hud" id="hud">
+        <div class="stat">
+          <div class="mutedSmall">Score</div>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat">
+          <div class="mutedSmall">Coins</div>
+          <strong id="coins">0</strong>
+        </div>
+        <div class="stat">
+          <div class="mutedSmall">Fuel</div>
+          <strong id="fuel">100%</strong>
+        </div>
+        <div class="stat">
+          <div class="mutedSmall">Health</div>
+          <strong id="health">100%</strong>
+        </div>
+        <div style="margin-left:auto"></div>
       </div>
 
       <div class="controls">
-        <div class="ability">
-          <button id="btnWild">1: Wild <span id="wildCount">x1</span></button>
-          <div class="muted">Wildcard matches any color</div>
-        </div>
-        <div class="ability">
-          <button id="btnFire">2: Fire <span id="fireCount">x1</span></button>
-          <div class="muted">Area destroy on impact</div>
-        </div>
-        <div class="ability">
-          <button id="btnIce">3: Ice <span id="iceCount">x1</span></button>
-          <div class="muted">Convert small area to shooter color</div>
-        </div>
-
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button id="btnPrev" class="ghost small">Prev</button>
-          <button id="btnNext" class="ghost small">Next</button>
-          <button id="btnReset" class="ghost small">Reset Progress</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Level Progress</strong>
-          <div id="uiRemaining" class="muted">Bubbles left: 0</div>
-        </div>
-        <div style="margin-top:10px" class="levelProgress" aria-hidden="true"><div id="levelBar" class="levelBar"></div></div>
-        <div class="instructions">This build is responsive across Desktop, Tablet and Mobile. Use abilities and aim carefully. New rows will be added periodically (configurable) and after selected events to extend gameplay.</div>
+        <button id="btnStart">Start</button>
+        <button id="btnPause" class="ghost">Pause</button>
+        <button id="btnReset" class="ghost">Reset</button>
+        <div class="mutedSmall touchHint">Tap left/right or drag to steer on touch</div>
       </div>
     </div>
 
-    <div class="right">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Game Info</strong><div class="muted">Saved locally</div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="muted">Controls</div>
-          <ul style="margin:8px 0 0 18px;color:var(--muted-dark)">
-            <li>Mouse/touch to aim & click/tap to shoot</li>
-            <li>Space = quick shoot</li>
-            <li>1 = Wild, 2 = Fire, 3 = Ice</li>
-            <li>Every X shots adds a new row (configurable). After clearing level, extra rows may be added to next levels for challenge.</li>
-          </ul>
-        </div>
-
-        <hr style="margin:12px 0;border:none;height:1px;background:rgba(255,255,255,0.03)">
-
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Settings</strong><div class="muted">Tweaks for play</div></div>
-            <div>
-              <label class="muted">Add row every</label>
-              <select id="addRowEvery" class="small" title="Shots until a new row is added">
-                <option value="0">Off</option>
-                <option value="6">6 shots</option>
-                <option value="8" selected>8 shots</option>
-                <option value="12">12 shots</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <hr style="margin:12px 0;border:none;height:1px;background:rgba(255,255,255,0.03)">
-
-        <div>
-          <strong>Levels</strong>
-          <div style="margin-top:8px" class="muted">Procedural +120 levels. Next level adds more rows/colors to increase difficulty.</div>
-        </div>
+    <div class="right panel">
+      <div>
+        <strong>Upgrades & Abilities</strong>
+        <div class="mutedSmall" style="margin-top:8px">Collect coins to unlock upgrades (demo credits saved locally).</div>
       </div>
 
-      <div style="height:12px"></div>
+      <div style="margin-top:12px">
+        <div class="mutedSmall">Abilities</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="btnMag" class="small">Use Magnet (3)</button>
+          <button id="btnNitro" class="small">Nitro (2)</button>
+        </div>
+        <div class="mutedSmall" style="margin-top:8px">Magnet collects nearby coins for a short time. Nitro temporarily boosts speed but consumes more fuel.</div>
+      </div>
 
-      <div class="panel">
-        <strong>Tips</strong>
-        <ol style="margin:8px 0 0 18px;color:var(--muted-dark)">
-          <li>Bounce shots off walls to reach pockets.</li>
-          <li>Use Wild for awkward single bubbles; Fire to break islands; Ice to line up matches.</li>
-        </ol>
+      <div style="margin-top:12px">
+        <strong>Level & difficulty</strong>
+        <div class="mutedSmall" style="margin-top:8px">Levels become longer and spawn more obstacles & AI cars. Some AI will show turn indicators (left/right) before they change lanes at higher levels.</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <strong>Controls</strong>
+        <ul style="margin:8px 0 0 18px;color:var(--muted);font-size:13px">
+          <li>Desktop: Arrow keys or A/D to steer, Space = Nitro</li>
+          <li>Mobile: Tap left/right or drag to steer, buttons for abilities</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <div style="height:10px"></div>
-  <div style="text-align:center;color:var(--muted-dark)">Built as a single-file web app — open, local-only</div>
+  <div class="footer">
+    <div class="muted">Responsive demo — local-only. Built with HTML/CSS/JS in one file.</div>
+    <div class="muted">© Arcade Hub</div>
+  </div>
 </div>
 
 <script>
 /*
-  Enhanced Bubble Royale
-  - Responsive canvas with device modes
-  - Clearer aim indicator (arrow + long line)
-  - Next queue of 3 preview balls with color labels
-  - Abilities: Wild, Fire, Ice
-  - Add-top-row mechanic every N shots (configurable) and extra rows applied between levels
-  - Day/Night toggle
-  - Improved touch & desktop responsiveness
-  - Local progress saved to localStorage
+  Racing Mini-Game (single file)
+  Features:
+    - Responsive canvas with device mode scaling
+    - Top-down lane-based road with obstacles and AI cars
+    - Collectables: coins, fuel, health, magnet pickups
+    - Abilities: magnet (collect coins), nitro (temporary speed boost)
+    - Gradual speed increase with level/time
+    - AI cars that sometimes indicate turning left/right before moving lanes at higher levels
+    - Touch & desktop controls, HUD, localStorage for coins/score
+  How to play:
+    - Start -> Use arrow keys/A-D or touch to steer between lanes. Collect coins and pickups.
 */
 
-/* -----------------------
-   Config & Utilities
-   ----------------------- */
-const SAVE_KEY = 'bubble-royale-save-v2';
-const TOTAL_LEVELS = 120;
-const COLOR_PALETTE = ['#ff6b6b','#ffd36b','#6bf5a3','#6bd1ff','#d86bff','#ffa09b']; // clear distinct colors
-const NAME_PALETTE = ['Red','Yellow','Green','Cyan','Purple','Peach'];
-const DEVICE_MODES = {auto:'auto', desktop:'desktop', tablet:'tablet', mobile:'mobile'};
-let deviceMode = 'auto';
-let isDay = false;
-
-function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-function rand(n){ return Math.floor(Math.random()*n); }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function now(){ return Date.now(); }
-
-/* -----------------------
-   Canvas & scaling
-   ----------------------- */
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('raceCanvas');
 const ctx = canvas.getContext('2d');
-const overlay = document.getElementById('overlay');
-const nextQueueEl = document.getElementById('nextQueue');
 
 let DPR = window.devicePixelRatio || 1;
 let CANVAS_W = 720, CANVAS_H = 900;
-let CELL_RADIUS_BASE = 20; // base radius used for calculations; scaled by device mode
-let TOP_PADDING_RATIO = 0.08; // top padding fraction of canvas height
 
-function applyDeviceMode(mode){
-  deviceMode = mode;
-  if(mode === 'desktop'){ CELL_RADIUS = 24; }
-  else if(mode === 'tablet'){ CELL_RADIUS = 20; }
-  else if(mode === 'mobile'){ CELL_RADIUS = 16; }
-  else { // auto: choose based on container width
-    const cw = canvas.getBoundingClientRect().width;
-    if(cw > 720) CELL_RADIUS = 24;
-    else if(cw > 480) CELL_RADIUS = 20;
-    else CELL_RADIUS = 16;
-  }
-  resizeCanvas();
-}
-let CELL_RADIUS = CELL_RADIUS_BASE;
-
-/* resize canvas to container, set DPR */
-function resizeCanvas(){
+function resizeCanvasForDevice(mode='auto'){
   DPR = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  // Ensure canvas has correct aspect ratio and fits container
-  const width = Math.max(420, rect.width);
-  const height = Math.max(640, window.innerHeight * 0.68);
+  const wrap = document.getElementById('gameWrap');
+  const rect = wrap.getBoundingClientRect();
+  const width = Math.max(360, rect.width);
+  const height = Math.max(560, window.innerHeight * 0.66);
   canvas.width = Math.floor(width * DPR);
   canvas.height = Math.floor(height * DPR);
   canvas.style.width = width + 'px';
   canvas.style.height = height + 'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
   CANVAS_W = width; CANVAS_H = height;
-  // adjust cell radius if in auto
-  if(deviceMode === 'auto'){
-    if(CANVAS_W > 900) CELL_RADIUS = 26;
-    else if(CANVAS_W > 720) CELL_RADIUS = 22;
-    else if(CANVAS_W > 520) CELL_RADIUS = 18;
-    else CELL_RADIUS = 14;
-  }
 }
-window.addEventListener('resize', ()=>{ applyDeviceMode(deviceMode); });
+resizeCanvasForDevice();
 
-/* -----------------------
-   Game State
-   ----------------------- */
-let state = {
-  level:1,
-  unlocked:1,
-  score:0,
-  abilities: {wild:1, fire:1, ice:1},
-  addRowEvery: Number(document.getElementById('addRowEvery').value) || 8,
-  shooter: {angle:-Math.PI/2, ball:null, queue:[], shots:0},
-  anim: {projectiles:[]},
-  running:true
+window.addEventListener('resize', ()=> resizeCanvasForDevice(document.getElementById('device').value));
+document.getElementById('device').addEventListener('change', (e)=> resizeCanvasForDevice(e.target.value));
+
+/* Game variables */
+const LANE_COUNT = 3; // left, mid, right
+let laneX = []; // pixel centers for lanes
+let road = {
+  laneCount: LANE_COUNT,
+  laneWidth: 0,
+  topMargin: 0,
+  bottomMargin: 0
 };
 
-let currentLevel = null; // {grid, rows, cols, colorCount}
-let levelInitialCount = 0;
+let game = {
+  running: false,
+  paused: false,
+  level:1,
+  distance:0,
+  speed: 200, // px per second baseline scrolling speed
+  speedMultiplier:1,
+  spawnTimer: 0,
+  spawnInterval: 1.2, // seconds between spawns
+  aiDensity: 0.8, // spawn probability
+  time: 0,
+  coinsCollected: 0,
+  score: 0,
+  coinsBank: Number(localStorage.getItem('race-coins') || 0),
+  abilities: {magnet:3, nitro:2},
+  magnetActiveUntil: 0,
+  nitroActiveUntil: 0
+};
 
-/* -----------------------
-   Persistence
-   ----------------------- */
-function saveProgress(){
-  try{
-    const s = {level: state.level, unlocked: state.unlocked, score: state.score, abilities: state.abilities};
-    localStorage.setItem(SAVE_KEY, JSON.stringify(s));
-  }catch(e){}
-}
-function loadProgress(){
-  try{
-    const s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
-    if(s){
-      state.level = s.level || 1;
-      state.unlocked = s.unlocked || 1;
-      state.score = s.score || 0;
-      state.abilities = s.abilities || state.abilities;
-    }
-  }catch(e){}
+/* Player car model */
+let player = {
+  lane: 1, // 0-left,1-mid,2-right
+  x:0,y:0,
+  width: 60, height:110,
+  speedX: 600,
+  health: 100,
+  fuel: 100,
+  lightsOn: true
+};
+
+/* Entities */
+let aiCars = []; // {lane, y, speed, w, h, color, turnIndicator: null|'left'|'right', turnAtY}
+let collectibles = []; // coins, fuel, health, magnet pickups
+
+/* Tuning parameters by level */
+function tuneForLevel(level){
+  const base = 200; // base speed
+  game.level = level;
+  game.speed = base + (level - 1) * 12; // slightly faster each level
+  game.spawnInterval = Math.max(0.6, 1.6 - (level * 0.02));
+  game.aiDensity = Math.min(1.6, 0.6 + level * 0.02);
 }
 
-/* -----------------------
-   Level Generation (improved)
-   ----------------------- */
-function generateLevel(index, extraRows=0){
-  // scale difficulty: colorCount increases slowly, rows increase
-  const diff = clamp(index,1,TOTAL_LEVELS);
-  const colorCount = clamp(3 + Math.floor((diff-1)/20), 3, COLOR_PALETTE.length);
-  const rows = clamp(5 + Math.floor((diff-1)/6) + extraRows, 4, 14); // up to 14 rows
-  const cols = 12;
-  const grid = [];
-  const baseFill = 0.66 - Math.min(0.22, diff / TOTAL_LEVELS * 0.3);
-  for(let r=0;r<rows;r++){
-    const row = new Array(cols).fill(null);
-    for(let c=0;c<cols;c++){
-      const fillProb = baseFill + (1 - r/rows) * 0.18; // top rows more dense
-      if(Math.random() < fillProb){
-        const color = rand(colorCount);
-        row[c] = {color, special: null};
-      }
-    }
-    grid.push(row);
+/* Initialize lanes */
+function computeLanes(){
+  road.laneWidth = CANVAS_W * 0.28;
+  road.topMargin = Math.floor(CANVAS_H * 0.06);
+  road.bottomMargin = Math.floor(CANVAS_H * 0.18);
+  const center = CANVAS_W / 2;
+  const gap = road.laneWidth + 18;
+  laneX = [
+    center - gap,
+    center,
+    center + gap
+  ];
+  // positioning player
+  player.x = laneX[player.lane];
+  player.y = CANVAS_H - road.bottomMargin - player.height/2;
+}
+
+computeLanes();
+
+/* draw road */
+function drawRoad(){
+  // background grass
+  ctx.fillStyle = '#062027';
+  ctx.fillRect(0,0,CANVAS_W,CANVAS_H);
+  // road area
+  const roadWidth = road.laneWidth * LANE_COUNT + 36 * (LANE_COUNT-1);
+  const roadLeft = (CANVAS_W - roadWidth)/2;
+  const roadRight = roadLeft + roadWidth;
+  // road gradient
+  const g = ctx.createLinearGradient(0,0,0,CANVAS_H);
+  g.addColorStop(0,'#2b2b2b'); g.addColorStop(1,'#151515');
+  ctx.fillStyle = g;
+  ctx.fillRect(roadLeft, 0, roadWidth, CANVAS_H);
+  // lane separators
+  for(let i=1;i<LANE_COUNT;i++){
+    const x = (laneX[i-1] + laneX[i]) / 2;
+    // dashed center line
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([18,18]);
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CANVAS_H); ctx.stroke();
+    ctx.setLineDash([]);
   }
-  // ensure playability: create some pocket clusters
-  for(let i=0;i<Math.floor(rows*cols/40);i++){
-    const pr = rand(rows-1); const pc = rand(cols-2)+1;
-    const baseColor = rand(colorCount);
-    grid[pr][pc] = {color:baseColor, special:null};
-    if(pc>0) grid[pr][pc-1] = {color:baseColor, special:null};
-    if(pc<cols-1) grid[pr][pc+1] = {color:baseColor, special:null};
-  }
-  // obstacles for higher levels
-  if(index > 30){
-    const stones = Math.floor(index/24);
-    for(let s=0;s<stones;s++){
-      const r = rand(rows-1); const c = rand(cols);
-      if(grid[r][c]) grid[r][c].special = 'stone';
-    }
-  }
-  return {grid, rows, cols, colorCount};
-}
-
-/* -----------------------
-   Grid math (staggered rows)
-   ----------------------- */
-function getCellPosition(r,c){
-  // grid widths adapt to canvas width
-  const cols = currentLevel.cols;
-  const topPad = Math.max(40, CANVAS_H * TOP_PADDING_RATIO);
-  const fullWidth = CANVAS_W - 40;
-  const cellSpacingX = fullWidth / cols;
-  const cellRadius = Math.min(CELL_RADIUS, Math.floor(cellSpacingX * 0.45));
-  const xBase = 20 + c * cellSpacingX + cellSpacingX/2;
-  const x = xBase + (r%2 === 1 ? cellSpacingX/2 : 0);
-  const y = topPad + r * (cellRadius * 1.73);
-  return {x,y,radius:cellRadius};
-}
-
-/* -----------------------
-   Rendering
-   ----------------------- */
-function clearCanvas(){
-  ctx.clearRect(0,0,CANVAS_W, CANVAS_H);
-}
-function draw(){
-  clearCanvas();
-  // Background
-  if(document.body.classList.contains('theme-dark')){
-    const g = ctx.createLinearGradient(0,0,0,CANVAS_H);
-    g.addColorStop(0,'#06222a'); g.addColorStop(1,'#02121a');
-    ctx.fillStyle = g; ctx.fillRect(0,0,CANVAS_W,CANVAS_H);
-  } else {
-    const g = ctx.createLinearGradient(0,0,0,CANVAS_H);
-    g.addColorStop(0,'#f8fafc'); g.addColorStop(1,'#eef6fb');
-    ctx.fillStyle = g; ctx.fillRect(0,0,CANVAS_W,CANVAS_H);
-  }
-
-  if(!currentLevel) return;
-  // draw bubbles
-  for(let r=0;r<currentLevel.rows;r++){
-    for(let c=0;c<currentLevel.cols;c++){
-      const cell = currentLevel.grid[r][c];
-      if(!cell) continue;
-      const pos = getCellPosition(r,c);
-      drawBubble(pos.x, pos.y, pos.radius, cell);
-    }
-  }
-
-  // draw projectiles
-  for(const p of state.anim.projectiles){
-    drawMovingBall(p);
-  }
-
-  // draw shooter base
-  const sx = CANVAS_W/2, sy = CANVAS_H - 60;
-  drawShooter(sx,sy);
-
-  // draw aim indicator (if ready to shoot and no projectile active)
-  if(state.shooter.ball && state.anim.projectiles.length === 0){
-    drawAim(sx,sy,state.shooter.angle);
-  }
-
-  // update UI
-  updateNextQueueUI();
-  document.getElementById('uiRemaining').textContent = 'Bubbles left: ' + countRemaining();
-  document.getElementById('levelBar').style.width = `${Math.floor(100*(1 - countRemaining()/(levelInitialCount||1)))}%`;
-  document.getElementById('uiScore').textContent = state.score;
-  document.getElementById('uiLevel').textContent = state.level;
-  document.getElementById('uiShots').textContent = state.shooter.shots;
-}
-
-/* draw functions */
-function drawBubble(x,y,r,cell){
-  // gradient
-  const color = COLOR_PALETTE[cell.color % COLOR_PALETTE.length];
-  const g = ctx.createRadialGradient(x - r*0.3, y - r*0.4, r*0.15, x, y, r*1.2);
-  if(cell.special === 'wild'){ g.addColorStop(0,'#fff'); g.addColorStop(0.4,'#ffd36b'); g.addColorStop(1,color); }
-  else { g.addColorStop(0, shade(color,0.25)); g.addColorStop(1, color); }
-  ctx.beginPath(); ctx.fillStyle = g; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
-  // border
-  ctx.beginPath(); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.arc(x,y,r-1,0,Math.PI*2); ctx.stroke();
-  // special markers
-  if(cell.special === 'stone'){
-    ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.arc(x,y,r*0.62,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = document.body.classList.contains('theme-dark') ? '#cbd5e1' : '#1f2937'; ctx.font = `${r*0.7}px Inter`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('■', x, y);
-  }
-}
-
-function drawMovingBall(p){
-  const g = ctx.createRadialGradient(p.x - p.radius*0.3, p.y - p.radius*0.4, p.radius*0.15, p.x, p.y, p.radius*1.1);
-  const color = (p.special === 'wild') ? '#fff' : COLOR_PALETTE[p.color % COLOR_PALETTE.length];
-  if(p.special === 'wild'){ g.addColorStop(0,'#fff'); g.addColorStop(0.4,'#ffd36b'); g.addColorStop(1,'#ff6b6b'); }
-  else g.addColorStop(0, shade(color,0.3)), g.addColorStop(1,color);
-  ctx.beginPath(); ctx.fillStyle = g; ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.arc(p.x,p.y,p.radius-1,0,Math.PI*2); ctx.stroke();
-}
-
-function drawShooter(x,y){
-  // base circle
-  ctx.beginPath(); ctx.fillStyle = document.body.classList.contains('theme-dark') ? '#081426' : '#ffffff'; ctx.globalAlpha = 0.06; ctx.arc(x,y,42,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-  ctx.beginPath(); ctx.fillStyle = document.body.classList.contains('theme-dark') ? '#08303a' : '#f2f7fb'; ctx.arc(x,y,36,0,Math.PI*2); ctx.fill();
-  // cannon body
-  ctx.save(); ctx.translate(x,y); ctx.rotate(state.shooter.angle + Math.PI/2);
-  ctx.fillStyle = '#0ea5a5'; ctx.fillRect(-10,-56,20,44);
-  ctx.restore();
-  // draw current ball at tip
-  const tipX = x + Math.cos(state.shooter.angle)*48;
-  const tipY = y + Math.sin(state.shooter.angle)*48;
-  const ball = state.shooter.ball || {color: rand(currentLevel.colorCount), special:null};
-  drawBubble(tipX, tipY, CELL_RADIUS*0.9, ball);
-}
-
-function drawAim(sx,sy,angle){
-  // long dashed line and arrow
-  ctx.beginPath();
-  ctx.setLineDash([6,8]);
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  // road borders
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
   ctx.lineWidth = 2;
-  ctx.moveTo(sx,sy);
-  const len = Math.min(1000, Math.max(300, CANVAS_W * 0.8));
-  const ex = sx + Math.cos(angle) * len;
-  const ey = sy + Math.sin(angle) * len;
-  ctx.lineTo(ex,ey); ctx.stroke();
-  ctx.setLineDash([]);
-  // arrow head
-  const ax = sx + Math.cos(angle) * (len - 18);
-  const ay = sy + Math.sin(angle) * (len - 18);
+  ctx.strokeRect(roadLeft, 0, roadWidth, CANVAS_H);
+}
+
+/* draw car (player or AI) - simple stylized car with headlights */
+function drawCar(x,y,w,h,color,lights=false, scale=1, flip=false){
   ctx.save();
-  ctx.translate(ax, ay); ctx.rotate(angle + Math.PI/2);
+  ctx.translate(x,y);
+  if(flip) ctx.scale(-1,1);
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  roundRect(ctx, -w/2, -h/2, w, h, 10*scale, true, false);
+  // windows
   ctx.fillStyle = 'rgba(255,255,255,0.12)';
-  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-8, -18); ctx.lineTo(8,-18); ctx.closePath(); ctx.fill();
+  ctx.fillRect(-w*0.2, -h*0.3, w*0.4, h*0.22);
+  // wheels
+  ctx.fillStyle = '#222';
+  ctx.fillRect(-w*0.42, h*0.18, w*0.18, h*0.16);
+  ctx.fillRect(w*0.24, h*0.18, w*0.18, h*0.16);
+  // headlights
+  if(lights){
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,248,200,0.9)';
+    ctx.ellipse(-w*0.2, h*0.4, w*0.08, h*0.06, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,248,200,0.9)';
+    ctx.ellipse(w*0.2, h*0.4, w*0.08, h*0.06, 0, 0, Math.PI*2); ctx.fill();
+    // beam
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,248,200,0.035)';
+    ctx.moveTo(-w*0.24, h*0.4);
+    ctx.quadraticCurveTo(0, h*1.4, -w*1.3, h*6.0);
+    ctx.lineTo(-w*0.9, h*6.0); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,248,200,0.035)';
+    ctx.moveTo(w*0.24, h*0.4);
+    ctx.quadraticCurveTo(0, h*1.4, w*1.3, h*6.0);
+    ctx.lineTo(w*0.9, h*6.0); ctx.closePath(); ctx.fill();
+  }
   ctx.restore();
 }
 
-/* show next queue in UI */
-function updateNextQueueUI(){
-  nextQueueEl.innerHTML = '';
-  for(let i=0;i<3;i++){
-    const q = state.shooter.queue[i] || state.shooter.ball;
-    const el = document.createElement('div'); el.className = 'nextBall';
-    el.style.background = 'transparent';
-    const r = document.createElement('div');
-    r.style.width='36px'; r.style.height='36px'; r.style.borderRadius='8px';
-    r.style.display='flex'; r.style.alignItems='center'; r.style.justifyContent='center';
-    r.style.fontWeight='700'; r.style.boxShadow = 'inset 0 -6px 20px rgba(0,0,0,0.12)';
-    if(!q) { r.textContent='—'; } else {
-      const color = q.special === 'wild' ? '#ffd36b' : COLOR_PALETTE[q.color % COLOR_PALETTE.length];
-      r.style.background = color;
-      r.textContent = q.special === 'fire' ? '🔥' : (q.special === 'wild' ? '★' : '');
-    }
-    el.appendChild(r);
-    const label = document.createElement('div'); label.style.fontSize='11px'; label.style.color='var(--muted-dark)'; label.style.marginLeft='6px';
-    label.textContent = q && q.special ? q.special.toUpperCase() : (q ? NAME_PALETTE[q.color] : '');
-    el.style.display='flex'; el.style.alignItems='center';
-    el.style.gap='8px'; el.style.padding='4px';
-    el.appendChild(label);
-    nextQueueEl.appendChild(el);
+/* rounded rectangle helper */
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  if(typeof r === 'undefined') r=5;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
+}
+
+/* draw HUD overlays on canvas (level, speed chip already in HTML overlay) */
+function drawHUDOnCanvas(){
+  // small indicators like health bar above player
+  const barW = 120;
+  const bx = player.x - barW/2, by = player.y - player.height/2 - 26;
+  // health
+  const healthPct = clamp(player.health/100,0,1);
+  ctx.fillStyle = 'rgba(0,0,0,0.5)'; roundRect(ctx, bx-2, by-2, barW+4, 18, 8, true, false);
+  ctx.fillStyle = '#444'; roundRect(ctx, bx, by, barW, 12, 6, true, false);
+  ctx.fillStyle = lerpColor('#ef4444', '#10b981', healthPct);
+  roundRect(ctx, bx, by, barW*healthPct, 12, 6, true, false);
+}
+
+/* spawn mechanics for AI and collectibles */
+function spawnAI(){
+  // spawn in a random lane at top (y negative), speed relative to game.speed
+  const lane = Math.floor(Math.random()*LANE_COUNT);
+  const x = laneX[lane];
+  const w = 56, h = 110;
+  const speed = game.speed * (0.6 + Math.random()*0.9); // AI speed relative
+  const color = sample(['#ff6b6b','#6bd1ff','#ffd36b','#d86bff']);
+  let ai = {lane, x, y: -h - 20, speed, w, h, color, turnIndicator: null, turnAtY: null, willTurn:false};
+  // decide if this AI will turn (only at higher levels)
+  if(game.level >= 6 && Math.random() < 0.35 + game.level * 0.01){
+    ai.willTurn = true;
+    // set a random y where it will turn (between 100 and CANVAS_H - 200)
+    ai.turnAtY = 60 + Math.random()*(CANVAS_H - 300);
+    ai.turnIndicator = Math.random() < 0.5 ? 'left' : 'right';
   }
-  // update ability counts
-  document.getElementById('wildCount').textContent = 'x' + state.abilities.wild;
-  document.getElementById('fireCount').textContent = 'x' + state.abilities.fire;
-  document.getElementById('iceCount').textContent = 'x' + state.abilities.ice;
+  aiCars.push(ai);
 }
 
-/* -----------------------
-   Game mechanics
-   ----------------------- */
-function loadLevel(index, extraRows=0){
-  index = clamp(index,1,TOTAL_LEVELS);
-  state.level = index;
-  currentLevel = generateLevel(index, extraRows);
-  levelInitialCount = countGrid(currentLevel.grid);
-  // init shooter queue
-  state.shooter.queue = [];
-  for(let i=0;i<4;i++) state.shooter.queue.push(randomBall(currentLevel.colorCount));
-  state.shooter.ball = state.shooter.queue.shift();
-  state.anim.projectiles = [];
-  state.shooter.shots = 0;
-  saveProgress();
-  draw();
+function spawnCollectible(){
+  // coin, fuel, health, magnet pickups
+  const types = ['coin','coin','coin','fuel','health','magnet'];
+  const type = sample(types);
+  const lane = Math.floor(Math.random()*LANE_COUNT);
+  const pos = {lane, x: laneX[lane], y: -30, type, value: type==='coin'? 1 : (type==='fuel'?20: (type==='health'?20:1))};
+  collectibles.push(pos);
 }
 
-function randomBall(colorCount){
-  return {color: rand(colorCount), special: null};
-}
+/* update loop */
+let lastTime = performance.now();
+function update(ts){
+  const dt = Math.min(0.05, (ts - lastTime)/1000);
+  lastTime = ts;
+  if(game.running && !game.paused){
+    // speed multiplier for nitro
+    const nowMs = Date.now();
+    const nitroActive = game.nitroActiveUntil > nowMs;
+    const magnetActive = game.magnetActiveUntil > nowMs;
+    const baseSpeed = game.speed * (nitroActive ? 1.6 : 1);
+    // move entities downward (scene scrolls up)
+    const dy = baseSpeed * dt;
+    game.distance += dy;
+    game.time += dt;
 
-function countGrid(grid){
-  let c=0; for(const r of grid) for(const cell of r) if(cell) c++; return c;
-}
-function countRemaining(){ return currentLevel ? countGrid(currentLevel.grid) : 0; }
-
-/* shooting */
-function shoot(angle, specialOverride=null){
-  if(!currentLevel) return;
-  if(state.anim.projectiles.length > 0) return; // one projectile at time
-  const cw = CANVAS_W, ch = CANVAS_H;
-  const sx = cw/2, sy = ch - 60;
-  const ball = Object.assign({}, state.shooter.ball || randomBall(currentLevel.colorCount));
-  if(specialOverride) ball.special = specialOverride;
-  // create projectile with speed scaled by canvas size
-  const baseSpeed = clamp(CANVAS_W/1.2, 600, 1200);
-  const p = {
-    x: sx, y: sy,
-    vx: Math.cos(angle) * baseSpeed,
-    vy: Math.sin(angle) * baseSpeed,
-    radius: Math.max(10, CELL_RADIUS * 0.9),
-    color: ball.color,
-    special: ball.special,
-    createdAt: now()
-  };
-  state.anim.projectiles.push(p);
-  // advance queue
-  state.shooter.ball = state.shooter.queue.shift() || randomBall(currentLevel.colorCount);
-  state.shooter.queue.push(randomBall(currentLevel.colorCount));
-  state.shooter.shots++;
-  // after shot, maybe add row every N shots
-  if(Number(document.getElementById('addRowEvery').value) > 0){
-    if(state.shooter.shots % Number(document.getElementById('addRowEvery').value) === 0){
-      addRowToTop();
-      toast('New row added!');
+    // spawn logic
+    game.spawnTimer -= dt;
+    if(game.spawnTimer <= 0){
+      game.spawnTimer = Math.max(0.4, game.spawnInterval * (0.8 + Math.random()*0.6));
+      // spawn AI based on density
+      if(Math.random() < Math.min(1, 0.2 + game.aiDensity * 0.18)) spawnAI();
+      // spawn collectible sometimes
+      if(Math.random() < 0.5) spawnCollectible();
     }
-  }
-}
 
-/* move projectiles and handle collisions */
-let lastFrame = performance.now();
-function gameLoop(ts){
-  const dt = Math.min(0.04, (ts - lastFrame)/1000); lastFrame = ts;
-  updateProjectiles(dt);
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-requestAnimationFrame(gameLoop);
-
-function updateProjectiles(dt){
-  if(!currentLevel) return;
-  const topPad = Math.max(40, CANVAS_H * TOP_PADDING_RATIO);
-  for(let i = state.anim.projectiles.length - 1; i >= 0; i--){
-    const p = state.anim.projectiles[i];
-    p.x += p.vx * dt; p.y += p.vy * dt;
-    // bounce walls
-    if(p.x - p.radius <= 10){ p.x = 10 + p.radius; p.vx *= -1; }
-    if(p.x + p.radius >= CANVAS_W - 10){ p.x = CANVAS_W - 10 - p.radius; p.vx *= -1; }
-    // top boundary
-    if(p.y - p.radius <= topPad){
-      // snap to topmost row
-      const row = 0;
-      const col = findNearestColumn(p.x, row);
-      placeProjectileAt(row, col, p);
-      state.anim.projectiles.splice(i,1);
-      continue;
+    // update AI
+    for(let i=aiCars.length-1;i>=0;i--){
+      const a = aiCars[i];
+      a.y += (a.speed - baseSpeed*0.2) * dt; // relative movement to road
+      // if willTurn and near turnAtY, perform lane change
+      if(a.willTurn && a.y >= a.turnAtY && a.turnIndicator){
+        // compute target lane
+        const dir = a.turnIndicator === 'left' ? -1 : 1;
+        const targetLane = clamp(a.lane + dir, 0, LANE_COUNT-1);
+        // smooth lane transition
+        a.lane = targetLane;
+        a.x = laneX[a.lane];
+        a.turnIndicator = null;
+        a.willTurn = false;
+      }
+      // collision with player?
+      if(Math.abs(a.y - player.y) < (a.h/2 + player.height/2) && a.lane === player.lane){
+        // collision: reduce health and remove ai
+        player.health -= 18;
+        if(player.health < 0) player.health = 0;
+        aiCars.splice(i,1);
+        game.score = Math.max(0, game.score - 20);
+      }
+      // remove if past screen
+      if(a.y > CANVAS_H + 200) aiCars.splice(i,1);
     }
-    // collision with existing bubble
-    let collided = false;
-    outer:
-    for(let r=0;r<currentLevel.rows;r++){
-      for(let c=0;c<currentLevel.cols;c++){
-        const cell = currentLevel.grid[r][c];
-        if(!cell) continue;
-        const pos = getCellPosition(r,c);
-        const dx = p.x - pos.x, dy = p.y - pos.y;
-        const dist = Math.hypot(dx,dy);
-        if(dist <= p.radius + pos.radius - 2){
-          const placement = findPlacementAround(r,c,p.x,p.y);
-          if(placement) placeProjectileAt(placement.r, placement.c, p);
-          else placeProjectileAt(r,c,p);
-          state.anim.projectiles.splice(i,1);
-          collided = true;
-          break outer;
+
+    // collectibles update
+    for(let i=collectibles.length-1;i>=0;i--){
+      collectibles[i].y += baseSpeed * dt * 0.9;
+      const c = collectibles[i];
+      // magnet effect: auto-collect if magnet active and within radius
+      if(magnetActive){
+        const px = player.x, py = player.y;
+        const pos = {x: c.x, y: c.y};
+        const dist = Math.hypot(px-pos.x, py-pos.y);
+        if(dist < 200){
+          collectItem(c);
+          collectibles.splice(i,1);
+          continue;
         }
       }
+      // collision: if collectible near player lane and y close
+      if(c.lane === player.lane && Math.abs(c.y - player.y) < 60){
+        collectItem(c);
+        collectibles.splice(i,1);
+        continue;
+      }
+      // drop off screen
+      if(c.y > CANVAS_H + 100) collectibles.splice(i,1);
     }
-    // remove if off bottom (shouldn't)
-    if(p.y - p.radius > CANVAS_H + 200){ state.anim.projectiles.splice(i,1); }
+
+    // fuel drain
+    const fuelDrain = dt * (nitroActive ? 8 : 2);
+    player.fuel -= fuelDrain;
+    if(player.fuel < 0) player.fuel = 0;
+    if(player.fuel === 0){
+      // slow down player if no fuel and eventually end level if out too long
+      game.speedMultiplier = Math.max(0.4, game.speedMultiplier - dt*0.03);
+    } else {
+      game.speedMultiplier = Math.min(1.2, 1);
+    }
+
+    // player controls smoothing: move player x to lane center
+    const targetX = laneX[player.lane];
+    const dx = targetX - player.x;
+    const maxStep = player.speedX * dt;
+    if(Math.abs(dx) > maxStep) player.x += Math.sign(dx) * maxStep;
+    else player.x = targetX;
+
+    // difficulty increase over time: small speed bump per level distance
+    if(game.time > 20){
+      game.time = 0;
+      game.speed += 6;
+      document.getElementById('speedChip').textContent = 'Speed: ' + (game.speed/200).toFixed(2) + 'x';
+    }
+
+    // level progression: if distance passes threshold -> next level
+    const levelDistance = 1500 + game.level * 600;
+    if(game.distance >= levelDistance){
+      game.distance = 0;
+      nextLevel();
+    }
+
+    // player death check
+    if(player.health <= 0) {
+      gameOver();
+    }
   }
 }
 
-/* placement helper */
-function findNearestColumn(x, row){
-  let best = 0; let bestd = 1e9;
-  for(let c=0;c<currentLevel.cols;c++){
-    const pos = getCellPosition(row,c);
-    const d = Math.abs(pos.x - x);
-    if(d < bestd){ bestd = d; best = c; }
+/* collecting items */
+function collectItem(item){
+  if(item.type === 'coin'){
+    game.coinsCollected += item.value;
+    game.coinsBank += item.value;
+    game.score += 10 * item.value;
+    localStorage.setItem('race-coins', game.coinsBank);
+  } else if(item.type === 'fuel'){
+    player.fuel = Math.min(100, player.fuel + item.value);
+    game.score += 25;
+  } else if(item.type === 'health'){
+    player.health = Math.min(100, player.health + item.value);
+    game.score += 30;
+  } else if(item.type === 'magnet'){
+    game.abilities.magnet = Math.min(9, game.abilities.magnet + 1);
+    game.score += 40;
   }
-  return best;
-}
-function findPlacementAround(r,c,x,y){
-  const neighbors = getNeighbors(r,c);
-  const candidates = [];
-  for(const n of neighbors){
-    if(n.r < 0 || n.r >= currentLevel.rows || n.c < 0 || n.c >= currentLevel.cols) continue;
-    if(!currentLevel.grid[n.r][n.c]) candidates.push(n);
-  }
-  if(candidates.length === 0) return null;
-  candidates.sort((a,b)=>{
-    const pa = getCellPosition(a.r,a.c), pb = getCellPosition(b.r,b.c); return Math.hypot(pa.x-x,pa.y-y) - Math.hypot(pb.x-x,pb.y-y);
-  });
-  return candidates[0];
 }
 
-function placeProjectileAt(r,c, p){
-  // if occupied, try neighbors
-  if(currentLevel.grid[r][c]){
-    const nb = findPlacementAround(r,c,p.x,p.y);
-    if(nb) { r = nb.r; c = nb.c; }
-    else { /* fail placement */ return; }
-  }
-  // If target is stone and not fire, convert to blocked placement: try neighbors instead
-  if(currentLevel.grid[r] && currentLevel.grid[r][c] && currentLevel.grid[r][c].special === 'stone' && p.special !== 'fire'){
-    const nb = findPlacementAround(r,c,p.x,p.y);
-    if(nb){ r=nb.r; c=nb.c; } else return;
+/* next level */
+function nextLevel(){
+  game.level++;
+  tuneForLevel(game.level);
+  document.getElementById('levelChip').textContent = 'Level ' + game.level;
+  // spawn some starter ai and collectibles to mark new challenge
+  for(let i=0;i<Math.min(6, game.level);i++) spawnAI();
+  for(let j=0;j<3;j++) spawnCollectible();
+}
+
+/* game over */
+function gameOver(){
+  game.running = false;
+  // show simple alert (could be modal)
+  setTimeout(()=> alert('Game Over! Score: ' + game.score + '\\nCoins: ' + game.coinsBank), 50);
+}
+
+/* rendering */
+function render(){
+  // clear
+  ctx.clearRect(0,0,CANVAS_W,CANVAS_H);
+  // draw road
+  drawRoad();
+
+  // draw collectibles
+  for(const c of collectibles){
+    drawCollectible(c);
   }
 
-  // do the placement
-  currentLevel.grid[r][c] = {color: p.color, special: p.special === 'wild' ? 'wild' : (p.special === 'fire' ? null : null)};
-  // if fire: destroy area
-  if(p.special === 'fire') { destroyRadius(r,c,2); state.score += 12; }
-  else if(p.special === 'ice'){ // ice converts small area to this color
-    convertAreaToColor(r,c,p.color,1); state.score += 6;
+  // draw AI cars
+  for(const a of aiCars){
+    drawCar(a.x, a.y, a.w, a.h, a.color, false, 1);
+    // draw turn indicator if present
+    if(a.turnIndicator){
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.font = '14px Inter';
+      ctx.textAlign='center';
+      ctx.fillText(a.turnIndicator === 'left' ? '←' : '→', a.x, a.y - a.h/2 - 10);
+    }
+  }
+
+  // draw player car
+  drawCar(player.x, player.y, player.width, player.height, '#3b82f6', player.lightsOn, 1.0);
+
+  // canvas HUD (fuel/health bars near bottom)
+  drawStats();
+
+  // request next frame
+  requestAnimationFrame(loopRender);
+}
+
+function loopRender(){
+  render();
+}
+
+/* draw collectible icons */
+function drawCollectible(c){
+  ctx.save();
+  const pos = {x: c.x, y: c.y};
+  if(c.type === 'coin'){
+    ctx.beginPath();
+    ctx.fillStyle = '#ffd36b';
+    ctx.arc(pos.x, pos.y, 12, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#6b4520'; ctx.font = '12px Inter'; ctx.textAlign='center'; ctx.fillText('¢', pos.x, pos.y+4);
+  } else if(c.type === 'fuel'){
+    ctx.fillStyle = '#10b981';
+    roundRect(ctx,pos.x-12,pos.y-10,24,20,6,true,false);
+    ctx.fillStyle = '#072517'; ctx.fillRect(pos.x-6,pos.y-2,12,4);
+  } else if(c.type === 'health'){
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.moveTo(pos.x,pos.y-8); ctx.arc(pos.x, pos.y-2, 10, -Math.PI, 0); ctx.fill();
+  } else if(c.type === 'magnet'){
+    ctx.fillStyle = '#c084fc';
+    ctx.beginPath(); ctx.arc(pos.x,pos.y,12,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font='12px Inter'; ctx.fillText('M', pos.x, pos.y+4);
+  }
+  ctx.restore();
+}
+
+/* draw bottom stats */
+function drawStats(){
+  // fuel bar
+  const barW = 220, barH=14;
+  const x = 16, y = CANVAS_H - 48;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; roundRect(ctx,x-2,y-4,barW+4,barH+8,8,true,false);
+  ctx.fillStyle = '#222'; roundRect(ctx,x,y,barW,barH,6,true,false);
+  ctx.fillStyle = '#ffd36b'; roundRect(ctx,x,y,barW * (player.fuel/100), barH,6,true,false);
+  ctx.fillStyle = '#fff'; ctx.font='12px Inter'; ctx.fillText('Fuel', x+6, y+barH-2);
+
+  // health
+  const hx = x + barW + 12;
+  ctx.fillStyle = '#222'; roundRect(ctx,hx,y,150,barH,6,true,false);
+  ctx.fillStyle = '#ef4444'; roundRect(ctx,hx,y,150 * (player.health/100),barH,6,true,false);
+  ctx.fillStyle = '#fff'; ctx.font='12px Inter'; ctx.fillText('Health', hx+6, y+barH-2);
+}
+
+/* utility: sample */
+function sample(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* lerp color */
+function lerpColor(a,b,t){
+  // a/b hex strings
+  const ca = hexToRgb(a), cb = hexToRgb(b);
+  const r = Math.round(ca.r + (cb.r-ca.r)*t);
+  const g = Math.round(ca.g + (cb.g-ca.g)*t);
+  const bl = Math.round(ca.b + (cb.b-ca.b)*t);
+  return `rgb(${r},${g},${bl})`;
+}
+function hexToRgb(hex){
+  const c = hex.replace('#','');
+  return {r:parseInt(c.substring(0,2),16), g:parseInt(c.substring(2,4),16), b:parseInt(c.substring(4,6),16)};
+}
+
+/* simple helpers */
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+/* Input handling: keyboard & touch */
+document.addEventListener('keydown', (e)=>{
+  if(!game.running) return;
+  if(e.key === 'ArrowLeft' || e.key === 'a') movePlayerLeft();
+  if(e.key === 'ArrowRight' || e.key === 'd') movePlayerRight();
+  if(e.key === ' ') activateNitro();
+  if(e.key === 'm') activateMagnet();
+});
+
+function movePlayerLeft(){ player.lane = clamp(player.lane - 1, 0, LANE_COUNT-1); }
+function movePlayerRight(){ player.lane = clamp(player.lane + 1, 0, LANE_COUNT-1); }
+
+/* touch - handle taps and horizontal drags */
+let touchStartX = null;
+canvas.addEventListener('touchstart', (e)=>{
+  if(e.touches.length === 1){
+    touchStartX = e.touches[0].clientX;
+  }
+});
+canvas.addEventListener('touchend', (e)=>{
+  if(touchStartX === null) return;
+  const endX = e.changedTouches[0].clientX;
+  const diff = endX - touchStartX;
+  if(Math.abs(diff) < 20){
+    // tap: decide left or right half
+    const rect = canvas.getBoundingClientRect();
+    const tapX = endX - rect.left;
+    if(tapX < CANVAS_W/2) movePlayerLeft(); else movePlayerRight();
   } else {
-    // normal: gather cluster
-    const cluster = gatherCluster(r,c);
-    if(cluster.length >= 3){
-      for(const cell of cluster) currentLevel.grid[cell.r][cell.c] = null;
-      state.score += cluster.length * 10;
-      // after clearing, remove floating
-      removeFloating();
-    }
+    // drag
+    if(diff < 0) movePlayerLeft(); else movePlayerRight();
   }
-
-  // check win
-  if(countRemaining() === 0){
-    onLevelComplete();
-  }
-}
-
-/* -----------------------
-   Cluster & float logic
-   ----------------------- */
-function gatherCluster(sr,sc){
-  const grid = currentLevel.grid;
-  const start = grid[sr][sc];
-  if(!start) return [];
-  const visited = {};
-  const out = [];
-  const stack = [{r:sr,c:sc}];
-  while(stack.length){
-    const cur = stack.pop();
-    const key = cur.r + ',' + cur.c;
-    if(visited[key]) continue;
-    visited[key] = true;
-    const cell = grid[cur.r] && grid[cur.r][cur.c];
-    if(!cell) continue;
-    const matches = (cell.special === 'wild') || (start.special === 'wild') || (cell.color === start.color);
-    if(matches){
-      out.push({r:cur.r,c:cur.c});
-      const neigh = getNeighbors(cur.r, cur.c);
-      for(const n of neigh) if(!visited[n.r+','+n.c]) stack.push(n);
-    }
-  }
-  return out;
-}
-
-function getNeighbors(r,c){
-  // 6-neighbor offset using odd-row staggering
-  const neighbors = [];
-  const isOdd = r % 2 === 1;
-  // left/right
-  neighbors.push({r,c:c-1}); neighbors.push({r,c:c+1});
-  // up/down
-  neighbors.push({r:r-1,c});
-  neighbors.push({r:r+1,c});
-  // diagonal depends on row parity
-  neighbors.push({r:r-1, c: isOdd ? c+1 : c-1});
-  neighbors.push({r:r+1, c: isOdd ? c+1 : c-1});
-  return neighbors;
-}
-
-function removeFloating(){
-  const grid = currentLevel.grid; const rows = currentLevel.rows, cols = currentLevel.cols;
-  const visited = {}; const connected = {};
-  const stack = [];
-  for(let c=0;c<cols;c++) if(grid[0][c]) stack.push({r:0,c});
-  while(stack.length){
-    const cur = stack.pop(); const k = cur.r+','+cur.c; if(visited[k]) continue; visited[k]=true; connected[k]=true;
-    const neigh = getNeighbors(cur.r,cur.c);
-    for(const n of neigh) if(n.r>=0 && n.r<rows && n.c>=0 && n.c<cols && grid[n.r][n.c] && !visited[n.r+','+n.c]) stack.push(n);
-  }
-  let removed=0;
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(grid[r][c]){ if(!connected[r+','+c]){ grid[r][c]=null; removed++; } }
-  if(removed>0) state.score += removed * 5;
-}
-
-/* destroy radius (for fire) */
-function destroyRadius(cr,cc,radius){
-  for(let r=cr-radius;r<=cr+radius;r++){
-    for(let c=cc-radius;c<=cc+radius;c++){
-      if(r>=0 && r<currentLevel.rows && c>=0 && c<currentLevel.cols){
-        currentLevel.grid[r][c] = null;
-      }
-    }
-  }
-  removeFloating();
-}
-
-/* ice convert area to color */
-function convertAreaToColor(cr,cc, color, radius){
-  for(let r=cr-radius;r<=cr+radius;r++){
-    for(let c=cc-radius;c<=cc+radius;c++){
-      if(r>=0 && r<currentLevel.rows && c>=0 && c<currentLevel.cols && currentLevel.grid[r][c]){
-        currentLevel.grid[r][c].color = color;
-      }
-    }
-  }
-}
-
-/* -----------------------
-   Row addition mechanic
-   ----------------------- */
-function addRowToTop(){
-  // pushes new row at top, drops bottom row if exceeding max rows visible
-  const cols = currentLevel.cols;
-  const newRow = new Array(cols).fill(null);
-  const colorCount = currentLevel.colorCount;
-  for(let c=0;c<cols;c++){
-    if(Math.random() < 0.72) newRow[c] = {color: rand(colorCount), special: null};
-  }
-  // insert at top
-  currentLevel.grid.unshift(newRow);
-  currentLevel.rows = currentLevel.grid.length;
-  // ensure we don't exceed max allowed rows space; if too many rows push bottom off and cause game over if bubble crosses threshold
-  // we'll cap display to 16 rows; if overflow, drop last row
-  if(currentLevel.rows > 16){
-    currentLevel.grid.pop();
-    currentLevel.rows = currentLevel.grid.length;
-  }
-  // if any bubble reaches too low (near shooter) -> game over
-  const bottomY = getCellPosition(currentLevel.rows - 1, 0).y;
-  const sy = CANVAS_H - 60;
-  if(bottomY + CELL_RADIUS * 1.1 >= sy - 18){
-    // game over for this level: reset level with penalty (add one extra row next)
-    toast('Bubbles reached bottom! Level reset with penalty.');
-    // reload level with an extra row to increase challenge
-    loadLevel(state.level, 1);
-  }
-}
-
-/* -----------------------
-   Level completion
-   ----------------------- */
-function onLevelComplete(){
-  // award points
-  const reward = 150 + Math.floor(currentLevel.rows * 10);
-  state.score += reward;
-  state.unlocked = Math.max(state.unlocked, state.level + 1);
-  saveProgress();
-  toast(`Cleared Level ${state.level}! +${reward} pts`);
-  // Give small abilities rewards occasionally
-  if(state.level % 5 === 0){ state.abilities.fire++; toast('You earned a Fireball!'); }
-  if(state.level % 7 === 0){ state.abilities.wild++; toast('You earned a Wild Ball!'); }
-  // For next level, add a couple extra rows to increase difficulty
-  setTimeout(()=> loadLevel(state.level + 1, 1), 900);
-}
-
-/* -----------------------
-   Helpers & UI
-   ----------------------- */
-function toast(msg){
-  overlay.innerHTML = `<div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);background:linear-gradient(90deg,#ffb86b,#ff7b7b);color:#081022;padding:8px 14px;border-radius:10px;font-weight:700;z-index:1000">${msg}</div>`;
-  setTimeout(()=> overlay.innerHTML = '', 1500);
-}
-
-function shade(hex, percent){
-  const c = hex.replace('#',''); const num = parseInt(c,16);
-  const r = Math.min(255, Math.floor(((num >> 16) & 0xff) * (1+percent)));
-  const g = Math.min(255, Math.floor(((num >> 8) & 0xff) * (1+percent)));
-  const b = Math.min(255, Math.floor(((num) & 0xff) * (1+percent)));
-  return `rgb(${r},${g},${b})`;
-}
-
-/* -----------------------
-   Input handling (mouse & touch & keyboard)
-   ----------------------- */
-let pointer = {x:0,y:0,down:false};
-const rectCache = () => canvas.getBoundingClientRect();
-
-canvas.addEventListener('mousemove', (e)=> {
-  const rect = rectCache(); pointer.x = e.clientX - rect.left; pointer.y = e.clientY - rect.top;
-  updateAim();
+  touchStartX = null;
 });
-canvas.addEventListener('touchmove', (e)=> {
-  e.preventDefault();
-  const t = e.touches[0]; const rect = rectCache(); pointer.x = t.clientX - rect.left; pointer.y = t.clientY - rect.top; updateAim();
-}, {passive:false});
-canvas.addEventListener('click', ()=> { shoot(state.shooter.angle); });
-document.addEventListener('keydown', (e)=> {
-  if(e.code === 'Space'){ e.preventDefault(); shoot(state.shooter.angle); }
-  if(e.key === '1') useAbility('wild');
-  if(e.key === '2') useAbility('fire');
-  if(e.key === '3') useAbility('ice');
-});
-
-function updateAim(){
-  const sx = CANVAS_W/2, sy = CANVAS_H - 60;
-  const dx = pointer.x - sx, dy = pointer.y - sy;
-  let angle = Math.atan2(dy, dx);
-  // clamp to upper half
-  const min = -Math.PI + 0.2, max = -0.2;
-  angle = clamp(angle, min, max);
-  state.shooter.angle = angle;
-}
 
 /* abilities */
-function useAbility(name){
-  if(state.abilities[name] <= 0){ toast('No ' + name + ' available'); return; }
-  // consume and set next ball special
-  state.abilities[name]--;
-  if(name === 'wild'){ state.shooter.ball = {color: 0, special:'wild'}; toast('Wild ready: next shot'); }
-  if(name === 'fire'){ state.shooter.ball = {color: 0, special:'fire'}; toast('Fireball ready: next shot'); }
-  if(name === 'ice'){ state.shooter.ball = {color: 0, special:'ice'}; toast('Ice ready: next shot'); }
-  saveProgress();
+function activateMagnet(){
+  if(game.abilities.magnet <= 0) return;
+  game.abilities.magnet--;
+  game.magnetActiveUntil = Date.now() + 7000; // 7s
+  document.getElementById('btnMag').textContent = 'Use Magnet (' + game.abilities.magnet + ')';
+}
+function activateNitro(){
+  if(game.abilities.nitro <= 0) return;
+  game.abilities.nitro--;
+  game.nitroActiveUntil = Date.now() + 3500; // 3.5s
+  document.getElementById('btnNitro').textContent = 'Nitro (' + game.abilities.nitro + ')';
 }
 
-/* -----------------------
-   UI wiring
-   ----------------------- */
-document.getElementById('btnWild').addEventListener('click', ()=> useAbility('wild'));
-document.getElementById('btnFire').addEventListener('click', ()=> useAbility('fire'));
-document.getElementById('btnIce').addEventListener('click', ()=> useAbility('ice'));
-document.getElementById('btnNext').addEventListener('click', ()=> loadLevel(Math.min(TOTAL_LEVELS, state.level + 1), 1));
-document.getElementById('btnPrev').addEventListener('click', ()=> loadLevel(Math.max(1, state.level - 1)));
-document.getElementById('btnReset').addEventListener('click', ()=> {
-  if(confirm('Reset progress to level 1 and clear saved data?')){ localStorage.removeItem(SAVE_KEY); state = Object.assign(state, {level:1,unlocked:1,score:0,abilities:{wild:1,fire:1,ice:1}}); loadLevel(1); }
+/* Button wiring */
+document.getElementById('btnStart').addEventListener('click', ()=> {
+  if(!game.running){
+    resetGame();
+  }
+  game.running = true; game.paused = false;
 });
-document.getElementById('addRowEvery').addEventListener('change', (e)=> state.addRowEvery = Number(e.target.value));
-document.getElementById('deviceMode').addEventListener('change', (e)=> applyDeviceMode(e.target.value));
-document.getElementById('dayToggle').addEventListener('click', ()=> {
-  isDay = !isDay;
-  document.body.classList.toggle('theme-light', isDay);
-  document.body.classList.toggle('theme-dark', !isDay);
-  document.getElementById('dayToggle').textContent = isDay ? '☀️' : '🌙';
-  resizeCanvas();
-});
+document.getElementById('btnPause').addEventListener('click', ()=> { game.paused = !game.paused; document.getElementById('btnPause').textContent = game.paused ? 'Resume' : 'Pause'; });
+document.getElementById('btnReset').addEventListener('click', ()=> resetGame());
+document.getElementById('btnMag').addEventListener('click', ()=> activateMagnet());
+document.getElementById('btnNitro').addEventListener('click', ()=> activateNitro());
 
-/* initial load & responsiveness */
-loadProgress();
-applyDeviceMode('auto'); // will pick sizes based on container
-loadLevel(state.level);
-updateNextQueueUI();
-
-/* show next queue initially */
-(function initQueueUI(){ updateNextQueueUI(); })();
-
-/* -----------------------
-   Start the game loop & helpers
-   ----------------------- */
-function start(){
-  lastFrame = performance.now();
-  requestAnimationFrame(gameLoop);
+/* reset and start */
+function resetGame(){
+  // clear arrays
+  aiCars = []; collectibles = [];
+  game.running = true; game.paused = false;
+  game.level = 1; game.distance = 0; game.time = 0;
+  tuneForLevel(1);
+  player.lane = 1; player.health = 100; player.fuel = 100;
+  player.x = laneX[player.lane];
+  game.score = 0; game.coinsCollected = 0;
+  game.spawnTimer = 0;
+  document.getElementById('levelChip').textContent = 'Level 1';
+  document.getElementById('speedChip').textContent = 'Speed: ' + (game.speed/200).toFixed(2) + 'x';
 }
-start();
 
-/* small utilities */
-function countRemaining(){ return currentLevel ? countGrid(currentLevel.grid) : 0; }
+/* game loop */
+let lastUpdate = performance.now();
+function mainLoop(ts){
+  const dt = Math.min(0.05, (ts - lastUpdate)/1000);
+  lastUpdate = ts;
+  update(ts);
+  render();
+  requestAnimationFrame(mainLoop);
+}
+requestAnimationFrame(mainLoop);
 
-/* End of script */
+/* startup */
+function init(){
+  computeLanes();
+  tuneForLevel(1);
+  player.x = laneX[player.lane];
+  // initial UI
+  document.getElementById('btnMag').textContent = 'Use Magnet (' + game.abilities.magnet + ')';
+  document.getElementById('btnNitro').textContent = 'Nitro (' + game.abilities.nitro + ')';
+  document.getElementById('score').textContent = game.score;
+  document.getElementById('coins').textContent = game.coinsBank;
+  document.getElementById('fuel').textContent = Math.floor(player.fuel) + '%';
+  document.getElementById('health').textContent = Math.floor(player.health) + '%';
+}
+init();
+
+/* render update interval for HUD text elements */
+setInterval(()=> {
+  document.getElementById('score').textContent = Math.floor(game.score);
+  document.getElementById('coins').textContent = game.coinsBank;
+  document.getElementById('fuel').textContent = Math.floor(player.fuel) + '%';
+  document.getElementById('health').textContent = Math.floor(player.health) + '%';
+}, 200);
+
+/* small polish: spawn some starting collectibles */
+for(let i=0;i<3;i++) spawnCollectible();
+for(let i=0;i<2;i++) spawnAI();
+
+/* End of file */
 </script>
 </body>
 </html>
