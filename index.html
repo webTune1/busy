@@ -3,1008 +3,929 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Classic Ludo + 2048 Puzzle + Quiz — Mini Arcade</title>
+<title>Bubble Royale — 100+ Levels Bubble Shooter</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#071022;
-    --card:#0b1220;
-    --accent:#ffb86b;
-    --muted:#94a3b8;
+    --bg0: #071322;
+    --bg1: #0b2030;
+    --panel: rgba(255,255,255,0.03);
+    --muted: #9fb0c7;
+    --accent: #ffb86b;
     --glass: rgba(255,255,255,0.03);
-    --success:#10b981;
-    --danger:#ef4444;
-    --panel:#071428;
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --success: #10b981;
+    --danger: #ef4444;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#041026 0%, #07112a 100%); color:#e6eef8}
-  .app{max-width:1100px;margin:20px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 12px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
-  header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  header h1{margin:0;font-size:20px}
-  .tabs{display:flex;gap:8px;margin-left:auto}
-  .tab{padding:8px 12px;border-radius:8px;background:var(--glass);cursor:pointer;color:var(--muted)}
-  .tab.active{background:linear-gradient(90deg, rgba(255,184,107,0.14), rgba(255,255,107,0.06));color:var(--accent);font-weight:600}
-  .row{display:flex;gap:14px}
-  .col{flex:1;min-width:260px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
-  .center{display:flex;align-items:center;justify-content:center}
-  .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
-  button{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:8px 12px;border-radius:8px;cursor:pointer}
-  button.ghost{background:transparent;color:var(--muted);border:1px dashed rgba(255,255,255,0.03)}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:#e6eef8;background:
+    radial-gradient(800px 400px at 10% 10%, rgba(255,184,107,0.03), transparent),
+    linear-gradient(180deg,var(--bg0),var(--bg1));-webkit-font-smoothing:antialiased}
+  .app{max-width:1200px;margin:20px auto;padding:18px;border-radius:14px;background:var(--card);box-shadow:0 18px 50px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.03)}
+  header{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .icon{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#ffb86b,#ff7b7b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#081022}
+  h1{margin:0;font-size:20px}
   .muted{color:var(--muted);font-size:13px}
-  canvas{background:transparent;border-radius:10px}
-  .players{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-  .playerRow{display:flex;gap:8px;align-items:center}
-  select,input[type=number],input[type=text]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-  .log{max-height:120px;overflow:auto;padding:8px;border-radius:8px;background:rgba(0,0,0,0.2);font-size:13px;color:var(--muted)}
-  footer{margin-top:14px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-  /* Simple responsive */
-  @media (max-width:900px){ .row{flex-direction:column} }
-  /* 2048 style */
-  .grid2048{display:grid;gap:8px;background:linear-gradient(180deg,#061426,#02101b);padding:12px;border-radius:12px}
-  .tile2048{display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;font-weight:700}
-  .controls-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .layout{display:flex;gap:16px}
+  .left{flex:1;min-width:420px}
+  .right{width:360px}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .canvasWrap{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#05202b,#02121a);display:flex;align-items:center;justify-content:center;padding:18px}
+  canvas{display:block;max-width:100%;height:auto;border-radius:8px;background:transparent}
+  .hud{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .badge{background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:10px;color:var(--muted);font-weight:600}
+  .big{font-size:18px;color:var(--accent);font-weight:700}
+  button{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .ghost{background:transparent;color:var(--muted);border:1px dashed rgba(255,255,255,0.03)}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .ability{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .ability button{width:120px}
+  .ability .count{font-size:13px;color:var(--muted)}
+  .levelProgress{height:10px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden}
+  .levelBar{height:100%;background:linear-gradient(90deg,#ffb86b,#ff7b7b);width:0%}
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--muted);font-size:13px}
+  .controls .hint{font-size:12px;color:var(--muted)}
+  .center{text-align:center}
+  .instructions{font-size:13px;color:var(--muted);margin-top:8px}
+  .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5)}
+  .cardTitle{display:flex;justify-content:space-between;align-items:center}
+  @media (max-width:980px){ .layout{flex-direction:column} .right{width:100%} }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" role="application" aria-label="Bubble Shooter - 100+ Levels">
   <header>
-    <div style="display:flex;align-items:center;gap:12px">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none"><rect x="1" y="1" width="22" height="22" rx="6" fill="#ffb86b" opacity="0.12"/><path d="M7 8h10M7 12h6M7 16h4" stroke="#ffb86b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="logo">
+      <div class="icon">BR</div>
       <div>
-        <h1>Classic Ludo + 2048 Puzzle + Quiz</h1>
-        <div class="muted">Accurate Ludo board & rules (pass-and-play + bots), long-play 2048 puzzle, improved quiz</div>
+        <h1>Bubble Royale</h1>
+        <div class="muted">Polished Bubble Shooter — 100+ procedurally generated levels, abilities, save & responsive UI</div>
       </div>
     </div>
-    <div class="tabs" role="tablist">
-      <div class="tab active" id="tab-ludo" data-tab="ludo">Ludo</div>
-      <div class="tab" id="tab-2048" data-tab="puzzle">2048 Puzzle</div>
-      <div class="tab" id="tab-quiz" data-tab="quiz">Quiz</div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <div class="badge">Level: <span id="uiLevel" class="big">1</span></div>
+      <div class="badge">Score: <span id="uiScore" class="big">0</span></div>
+      <button id="btnReset" class="ghost">Reset Progress</button>
     </div>
   </header>
 
-  <!-- LUDO -->
-  <div id="ludo" class="row content">
-    <div class="col card center" style="flex-direction:column;gap:12px">
-      <canvas id="ludoCanvas" width="560" height="560" style="max-width:100%"></canvas>
+  <div class="layout">
+    <div class="left">
+      <div class="panel canvasWrap" id="gamePanel">
+        <canvas id="gameCanvas" width="720" height="840" aria-label="Game canvas"></canvas>
+
+        <!-- Aim indicator and controls overlay -->
+        <div id="overlay" style="position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none"></div>
+      </div>
+
+      <div class="hud">
+        <div class="badge">Next: <canvas id="nextCanvas" width="56" height="56" style="border-radius:8px;background:transparent"></canvas></div>
+        <div class="badge">Queue: <span id="uiQueue" class="muted">--</span></div>
+        <div class="badge">Shots: <span id="uiShots" class="muted">0</span></div>
+        <div style="margin-left:auto" class="muted">Aim with mouse/touch. Click to shoot. Press 1/2 to use abilities.</div>
+      </div>
+
       <div class="controls">
-        <div class="muted">Turn:</div><div id="turnLabel" class="muted">—</div>
-        <div style="width:64px;height:48px;border-radius:8px;background:linear-gradient(180deg,#0b2b3a,#06222b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff" id="diceView">—</div>
-        <button id="rollBtn">Roll</button>
-        <button id="undoBtn" class="ghost">Undo</button>
-        <button id="newBtn" class="ghost">New Game</button>
-      </div>
-      <div class="muted">Tip: Roll dice then click a token to move. If multiple moves possible you will be asked to choose. Hold space to roll quickly.</div>
-    </div>
+        <div class="ability">
+          <button id="btnWild">Wild Ball (1) - 1x</button>
+          <div class="count muted">Wildcard matches any color</div>
+        </div>
+        <div class="ability">
+          <button id="btnFire">Fireball (2) - 1x</button>
+          <div class="count muted">Destroys area on impact</div>
+        </div>
 
-    <div class="col card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>Players & Bots</strong><div class="muted">Choose human or bot for each color</div></div>
-        <div class="muted">Bot level:
-          <select id="botLevel">
-            <option value="1">Easy</option>
-            <option value="2" selected>Medium</option>
-            <option value="3">Hard</option>
-          </select>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button id="btnPrev" class="ghost">Previous Level</button>
+          <button id="btnNext" class="ghost">Skip (cheat)</button>
         </div>
       </div>
 
-      <div class="players" id="playerSettings" style="margin-top:10px">
-        <!-- rows inserted by JS -->
+      <div style="margin-top:12px" class="panel">
+        <div class="cardTitle"><strong>Level Progress</strong><div id="uiRemaining" class="muted">Bubbles left: 0</div></div>
+        <div style="margin-top:10px" class="levelProgress" aria-hidden="true"><div id="levelBar" class="levelBar"></div></div>
+        <div class="instructions">This build uses a procedural level generator to create 100+ unique levels. Difficulty increases with rows, colors and obstacles. Your goal: clear all bubbles to progress.</div>
       </div>
+    </div>
 
-      <div style="margin-top:12px"><strong>Game Log</strong></div>
-      <div class="log" id="ludoLog"></div>
+    <div class="right">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Game Info</strong>
+          <div class="muted">Progress saved locally</div>
+        </div>
 
-      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-        <div class="muted">Rules: classic Ludo. Roll a 6 to bring a token out of base. Capture opponent by landing on them (not on safe squares). Exact roll required to enter final home cell.</div>
+        <div style="margin-top:12px">
+          <div class="muted">Controls</div>
+          <ul style="margin:8px 0 0 18px;color:var(--muted)">
+            <li>Mouse/touch to aim & click to shoot</li>
+            <li>Space to quickshoot, 1 = Wild Ball, 2 = Fireball</li>
+            <li>Clear all bubbles to pass level</li>
+          </ul>
+        </div>
+
+        <hr style="margin:12px 0;border:none;height:1px;background:rgba(255,255,255,0.03)">
+
         <div>
-          <button id="saveLudo" class="ghost">Save</button>
-          <button id="loadLudo" class="ghost">Load</button>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Level Selector</strong><div class="muted">Jump to any unlocked level</div></div>
+            <div><button id="btnSelect" class="ghost">Select</button></div>
+          </div>
+          <div style="margin-top:8px" class="muted">Unlocked: <span id="uiUnlocked">1</span> / <span id="totalLevels">120</span></div>
+        </div>
+
+        <hr style="margin:12px 0;border:none;height:1px;background:rgba(255,255,255,0.03)">
+
+        <div>
+          <strong>Achievements</strong>
+          <div style="margin-top:8px" class="muted" id="achieves">None yet — play to unlock</div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 2048 Puzzle -->
-  <div id="puzzle" class="row content" style="display:none">
-    <div class="col card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>2048 — Sliding Merge Puzzle</strong><div class="muted">Play to reach high scores — long session play possible</div></div>
-        <div class="muted">Score: <span id="pScore">0</span></div>
-      </div>
-      <div style="margin-top:12px" id="gridWrap" class="center">
-        <div id="grid2048" class="grid2048"></div>
-      </div>
-      <div class="controls-row">
-        <button id="new2048">New Game</button>
-        <button id="undo2048" class="ghost">Undo</button>
-        <button id="ai2048" class="ghost">Auto Move</button>
-        <div class="muted" style="margin-left:auto">Use arrow keys or swipe (mobile)</div>
-      </div>
-    </div>
-    <div class="col card">
-      <strong>Settings</strong>
-      <div style="margin-top:8px">
-        <label class="muted">Grid size</label><br>
-        <select id="gSize">
-          <option value="4" selected>4 x 4</option>
-          <option value="5">5 x 5</option>
-          <option value="6">6 x 6</option>
-        </select>
-      </div>
-      <div style="margin-top:12px"><strong>Controls</strong>
-        <div class="muted" style="margin-top:8px">Arrow keys to slide. Auto Move does a simple heuristic step.</div>
+      <div style="height:12px"></div>
+
+      <div class="panel">
+        <strong>Tips for long play</strong>
+        <ol style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>Plan banks off walls to reach deep pockets.</li>
+          <li>Use Wild Ball to finish tricky clusters.</li>
+          <li>Fireball is for clearing stubborn islands.</li>
+        </ol>
+        <div style="margin-top:10px"><button id="btnHelp" class="ghost">Show Controls & How-to</button></div>
       </div>
     </div>
   </div>
 
-  <!-- QUIZ -->
-  <div id="quiz" class="row content" style="display:none">
-    <div class="col card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>Smart Quiz</strong><div class="muted">Shuffled questions, categories, and randomized answers</div></div>
-        <div class="muted">Score: <span id="qScore">0</span></div>
-      </div>
-      <div style="margin-top:12px">
-        <div id="qText" style="font-size:16px"></div>
-        <div id="qAnswers" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
-      </div>
-      <div class="controls" style="margin-top:12px">
-        <button id="startQuiz">Start Quiz</button>
-        <button id="nextQuiz" class="ghost">Next</button>
-        <div class="muted" style="margin-left:auto">Q left: <span id="qLeft">0</span></div>
-      </div>
+  <div class="footer">
+    <div class="muted">Built as a single-file web app — local-only, no external assets.</div>
+    <div class="muted">© Bubble Royale</div>
+  </div>
+</div>
+
+<!-- Level select modal -->
+<div id="levelModal" style="display:none" class="modal" aria-hidden="true">
+  <div style="width:520px;max-width:95%" class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>Select Level</strong>
+      <button id="closeModal" class="ghost">Close</button>
     </div>
-    <div class="col card">
-      <strong>Settings</strong>
-      <div style="margin-top:8px">
-        <label class="muted">Questions per session</label><br><input id="qCount" type="number" value="12" min="3" max="100" />
-      </div>
-      <div style="margin-top:12px"><strong>Bank</strong><div class="muted">Embedded bank is randomized each session.</div></div>
+    <div style="margin-top:12px;height:420px;overflow:auto">
+      <div id="levelList" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     </div>
   </div>
-
-  <footer>
-    <div>Local-only demo — open-source single file. Want online play or native builds, I can add next.</div>
-    <div>&copy; Mini Arcade</div>
-  </footer>
 </div>
 
 <script>
-/* -------------------------------------------------------
-   Utilities
---------------------------------------------------------*/
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-const rand = n => Math.floor(Math.random()*n);
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]];} return a; }
-function fmtTime(s){ const m=Math.floor(s/60), sec=s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
-
-/* Tab switching */
-$$('.tab').forEach(t => t.addEventListener('click', ()=>{
-  $$('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  $$('.content').forEach(c=>c.style.display='none');
-  const id = t.dataset.tab;
-  $('#'+id).style.display='flex';
-}));
-
-/* -------------------------------------------------------
-   LUDO: Accurate square board layout rendering + rules
-   - standard 52 main track + 6 home steps per player (final cell needs exact roll)
-   - start indexes: red 0, green 13, yellow 26, blue 39 (clockwise)
-   - board grid layout 15x15 typical Ludo look (simplified drawing)
---------------------------------------------------------*/
-const LUDOCANVAS = $('#ludoCanvas');
-const LCTX = LUDOCANVAS.getContext('2d');
-const LW = LUDOCANVAS.width, LH = LUDOCANVAS.height;
-const COLORS = ['red','green','yellow','blue'];
-const COLOR_MAP = {red:'#e53e3e', green:'#10b981', yellow:'#f59e0b', blue:'#3b82f6'};
-const START_IDX = {red:0, green:13, yellow:26, blue:39};
-const SAFE_INDICES = [0,8,13,21,26,34,39,47]; // common safe positions (starts and opposite)
-let ludoState = null;
-let ludoSaved = null;
-let ludoHistory = [];
-const CELL = 28; // base cell size for drawing; board will be 15*C approx => adjust scale below
-
-/* Build a 15x15 grid mapping to Ludo meaningful cells.
-   We'll create an array mainPos[52] with {r,c} coordinates on 15x15 grid.
-   Standard Ludo layout (indices clockwise starting at red entry).
+/*
+  Bubble Royale - single file Bubble Shooter with 100+ procedurally generated levels
+  - Classic match-3 bubble shooter mechanics on a hex-offset grid
+  - Abilities: Wild Ball (matches any color) and Fireball (AOE destroy)
+  - Procedural level generator creates varied levels as difficulty increases
+  - Save progress in localStorage, responsive UI, keyboard & touch controls
 */
-const GRID = 15;
-const gridCoords = []; for(let r=0;r<GRID;r++){ for(let c=0;c<GRID;c++){ gridCoords.push({r,c}); }}
 
-function buildLudoMapping(){
-  // We'll carefully place the 52 track cells in clockwise order.
-  // Define a helper to push coordinate into mainPos.
-  const mainPos = [];
-  const m = (r,c) => ({r,c});
-  // Manual mapping derived from typical Ludo 15x15 board:
-  // Start from red entry near top-left quadrant and go clockwise
-  // Row and column positions (0..14)
-  // We'll define the outer ring path:
-  const path = [
-    m(6,0), m(6,1), m(6,2), m(6,3), m(6,4), m(5,4), m(4,4), m(3,4), m(2,4), m(2,5), m(2,6),
-    m(2,7), m(2,8), m(3,8), m(4,8), m(5,8), m(6,8), m(6,9), m(6,10), m(6,11), m(6,12), m(7,12),
-    m(8,12), m(9,12), m(10,12), m(10,11), m(10,10), m(10,9), m(10,8), m(11,8), m(12,8), m(12,7),
-    m(12,6), m(12,5), m(11,4), m(10,4), m(9,4), m(8,4), m(7,4), m(7,3), m(7,2), m(7,1), m(7,0),
-    m(8,0), m(9,0), m(10,0), m(11,0), m(12,1), m(12,2), m(12,3), m(12,4), m(13,4), m(14,4),
-    m(14,5), m(14,6)
-  ];
-  // The above is an approximation — it yields 52 points if adjusted; ensure length 52
-  // If not 52, construct by walking around perimeter properly.
-  // For safety, ensure we create exactly 52 points by following a deterministic route:
-  if(path.length !== 52){
-    // fallback generative approach: walk around a outer track in order.
-    const coords = [];
-    // top row center left->right
-    const seq = [
-      [6,0],[6,1],[6,2],[6,3],[6,4],[5,4],[4,4],[3,4],[2,4],[2,5],[2,6],[2,7],[2,8],[3,8],[4,8],[5,8],[6,8],[6,9],[6,10],[6,11],[6,12],[7,12],[8,12],[9,12],[10,12],[10,11],[10,10],[10,9],[10,8],[11,8],[12,8],[12,7],[12,6],[12,5],[11,4],[10,4],[9,4],[8,4],[7,4],[7,3],[7,2],[7,1],[7,0],[8,0],[9,0],[10,0],[11,0],[12,1],[12,2],[12,3],[12,4],[13,4],[14,4]
-    ];
-    // ensure length 52 by adding remaining with small offsets
-    while(seq.length<52){
-      seq.push([14,5 + (seq.length - 52 + 1)]);
-      if(seq.length>100) break;
-    }
-    for(const s of seq) path.push(m(s[0],s[1]));
-  }
-  // Now ensure exactly 52 by trimming or expanding slightly
-  const out = path.slice(0,52);
-  return out;
+/* -------------------------
+   Configuration & utilities
+--------------------------*/
+const TOTAL_LEVELS = 120;              // number of generated levels
+const SAVE_KEY = 'bubble-royale-save-v1';
+const COLORS = ['#ff6b6b','#ffd36b','#6bf5a3','#6bd1ff','#d86bff','#ffa09b']; // up to 6 colors
+const GRID_ROWS_BASE = 4;              // starting rows
+const GRID_ROWS_MAX = 12;              // maximum rows for advanced levels
+const CELL_RADIUS = 20;                // bubble radius in px in canvas coordinates (scaled)
+const ROW_OFFSET = Math.sqrt(3) * CELL_RADIUS; // vertical spacing approx
+const SHOOTER_RADIUS = 16;
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function rand(n){ return Math.floor(Math.random()*n); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* -------------------------
+   Canvas & scaling
+--------------------------*/
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const nextCanvas = document.getElementById('nextCanvas');
+const nctx = nextCanvas.getContext('2d');
+
+let devicePixelRatioCached = window.devicePixelRatio || 1;
+function resizeCanvas(){
+  const DPR = window.devicePixelRatio || 1;
+  devicePixelRatioCached = DPR;
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.floor(Math.max(480, rect.width));
+  const h = Math.floor(Math.max(640, window.innerHeight * 0.7));
+  canvas.width = Math.floor(720 * DPR); canvas.height = Math.floor(840 * DPR);
+  canvas.style.width = '100%'; canvas.style.height = 'auto';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  // next canvas
+  nextCanvas.width = 56 * DPR; nextCanvas.height = 56 * DPR; nextCanvas.style.width = '56px'; nextCanvas.style.height='56px';
+  nctx.setTransform(DPR,0,0,DPR,0,0);
 }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
-const MAIN_POS = buildLudoMapping(); // array length 52 of {r,c}
+/* -------------------------
+   Game model
+--------------------------*/
+let state = {
+  levelIndex: 1,
+  score: 0,
+  unlocked: 1,
+  positions: [], // grid array of rows with cells (null or {colorIndex, special})
+  rows: 6,
+  cols: 12, // columns for staggered grid (we'll use dynamic)
+  shooter: {x:0,y:0, angle: -Math.PI/2, ball: null, queue: [], shots:0},
+  anim: {projectiles: []},
+  abilities: {wild:1, fire:1},
+  running: true,
+  paused:false,
+  lastActionTime: Date.now()
+};
 
-/* Convert grid coord to canvas pixel center */
-function gridToXY(r,c){
-  // draw board area centered; compute cell size from canvas dims
-  const padding = 18;
-  // cell size: compute based on available canvas and GRID dimension
-  const cell = Math.min((LW - padding*2)/GRID, (LH - padding*2)/GRID);
-  const startX = (LW - cell*GRID)/2;
-  const startY = (LH - cell*GRID)/2;
-  const x = startX + c*cell + cell/2;
-  const y = startY + r*cell + cell/2;
-  return {x,y,cell};
-}
-
-/* Ludo state model:
-   players: array of {name,type} length up to 4
-   positions: array [for each player] of 4 token pos: -1(base), 0..51 main track, 100..105 home steps (100 + 0..5)
-   active: index
-   dice: number|null
-   rolled: bool
-   finished flags and winners
-*/
-function resetLudoDefault(){
-  const players = [
-    {name:'Red', type:'human'},
-    {name:'Green', type:'bot'},
-    {name:'Yellow', type:'bot'},
-    {name:'Blue', type:'bot'}
-  ];
-  ludoState = {
-    players,
-    positions: players.map(()=>[-1,-1,-1,-1]),
-    active: 0,
-    dice: null,
-    rolled: false,
-    finished: players.map(()=>false),
-    winners: []
+// save/restore
+function saveProgress(){
+  const save = {
+    levelIndex: state.levelIndex,
+    score: state.score,
+    unlocked: state.unlocked,
+    abilities: state.abilities
   };
-  ludoHistory = [];
-  logLudo('New default game created.');
-  renderLudo();
-  renderPlayersUI();
+  localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+}
+function loadProgress(){
+  const s = localStorage.getItem(SAVE_KEY);
+  if(!s) return;
+  try{
+    const data = JSON.parse(s);
+    state.levelIndex = data.levelIndex || 1;
+    state.score = data.score || 0;
+    state.unlocked = data.unlocked || 1;
+    state.abilities = data.abilities || state.abilities;
+  }catch(e){ console.warn('load failed', e); }
 }
 
-function saveLudo(){
-  try{ ludoSaved = JSON.stringify(ludoState); logLudo('Game saved locally (memory).'); }
-  catch(e){ logLudo('Save failed'); }
-}
-function loadLudo(){
-  if(!ludoSaved){ logLudo('No saved game found.'); return; }
-  ludoState = JSON.parse(ludoSaved);
-  logLudo('Saved game loaded.');
-  renderLudo(); renderPlayersUI();
-}
-
-/* Logging */
-function logLudo(msg){
-  const el = $('#ludoLog');
-  el.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>` + el.innerHTML;
-}
-
-/* Drawing functions */
-function renderLudo(){
-  const ctx = LCTX;
-  ctx.clearRect(0,0,LW,LH);
-  // draw board background
-  // draw 15x15 grid blocks with colored home quadrants
-  for(let r=0;r<GRID;r++){
-    for(let c=0;c<GRID;c++){
-      const {x,y,cell} = gridToXY(r,c);
-      const left = x - cell/2, top = y - cell/2;
-      // background square
-      ctx.fillStyle = '#071427';
-      ctx.fillRect(left, top, cell-2, cell-2);
+/* -------------------------
+   Level generator
+   - Procedurally generate initial bubble grid for a given level index
+   - Complexity increases: more rows, more colors, occasional "locked" clusters
+--------------------------*/
+function generateLevel(level){
+  // difficulty scaling
+  const difficulty = clamp(level,1,TOTAL_LEVELS);
+  const colorCount = clamp(3 + Math.floor((difficulty-1) / 15), 3, COLORS.length);
+  const rows = clamp(GRID_ROWS_BASE + Math.floor((difficulty-1)/6), GRID_ROWS_BASE, GRID_ROWS_MAX);
+  const cols = 12; // fixed number of columns for grid width consistency
+  // create empty grid: rows x cols (staggered: even rows have +0, odd rows offset)
+  const grid = [];
+  // probability to have blank pocket increases slightly with level
+  const blankChanceBase = 0.04 + (difficulty / TOTAL_LEVELS) * 0.06;
+  for(let r=0;r<rows;r++){
+    const row = new Array(cols).fill(null);
+    for(let c=0;c<cols;c++){
+      // Avoid extremes: top rows filled more, bottom less
+      const fillProb = 0.65 + 0.25 * (1 - r/rows) - blankChanceBase * r;
+      if(Math.random() < fillProb){
+        // pick random color, but create small clusters sometimes
+        let color = rand(colorCount);
+        // introduce pattern pockets for variety
+        if(Math.random() < 0.12) {
+          // cross cluster: make center more likely
+          if(c>1 && c<cols-2 && r>0 && r<rows-1) {
+            color = (color + ( (r+c) % colorCount )) % colorCount;
+          }
+        }
+        row[c] = {color: color, special: null};
+      }
     }
-  }
-  // draw 4 home triangles/areas (top-left red, top-right green, bottom-right yellow, bottom-left blue)
-  drawHomeArea('red', 0,0,6,6);
-  drawHomeArea('green', 0,9,6,6);
-  drawHomeArea('yellow', 9,9,6,6);
-  drawHomeArea('blue', 9,0,6,6);
-
-  // draw main track cells (52)
-  for(let i=0;i<MAIN_POS.length;i++){
-    const p = MAIN_POS[i];
-    const {x,y,cell} = gridToXY(p.r,p.c);
-    // cell base
-    ctx.fillStyle = '#0b2230';
-    ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
-    // mark safe squares
-    if(SAFE_INDICES.includes(i)){
-      ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
-    }
+    grid.push(row);
   }
 
-  // draw home columns (6 steps) per player from entry squares toward center
-  drawHomeColumns();
-
-  // draw tokens
-  if(!ludoState) return;
-  for(let p=0;p<ludoState.players.length;p++){
-    for(let t=0;t<4;t++){
-      drawToken(p,t,ludoState.positions[p][t]);
+  // Add some pockets of 'locked' or 'obstacle' bubbles for higher levels
+  if(level > 30 && Math.random() < 0.35){
+    const pockets = 2 + Math.floor(level/40);
+    for(let p=0;p<pockets;p++){
+      const pr = rand(Math.max(1,rows-2));
+      const pc = rand(cols);
+      if(grid[pr][pc]) grid[pr][pc].special = 'stone'; // cannot be popped unless fireball
     }
   }
 
-  // draw highlights: active player ring
-  const active = ludoState.active;
-  ctx.beginPath();
-  const any = MAIN_POS[ START_IDX[COLORS[active]] ];
-  const startxy = gridToXY(any.r, any.c);
-  ctx.strokeStyle = COLOR_MAP[COLORS[active]];
-  ctx.lineWidth = 2;
-  ctx.arc(startxy.x, startxy.y, 28, 0, Math.PI*2);
-  ctx.stroke();
-
-  // update labels
-  $('#turnLabel').textContent = ludoState.players[ludoState.active].name + (ludoState.players[ludoState.active].type==='bot' ? ' (bot)' : '');
-  $('#diceView').textContent = ludoState.dice===null ? '—' : ludoState.dice;
+  return {grid, rows, cols, colorCount};
 }
 
-/* draw a colored home quadrant */
-function drawHomeArea(color, startR, startC, rows, cols){
-  const ctx = LCTX;
+/* -------------------------
+   Grid coordinate math (hex offset)
+   - We'll pack circles in rows where odd rows are offset horizontally by radius
+--------------------------*/
+function getCellXY(r,c, rows, cols, canvasWidth, topPadding){
+  // compute cell spacing
+  const fullWidth = canvasWidth - 60; // left-right padding
+  const hgap = fullWidth / cols;
+  const cellR = Math.min(CELL_RADIUS, Math.floor(hgap * 0.5));
+  const xBase = 30 + c * hgap + hgap/2;
+  const y = topPadding + r * (cellR * 1.73); // approx sqrt(3)
+  const x = xBase + (r % 2 === 1 ? hgap/2 : 0);
+  return {x,y,radius: cellR};
+}
+
+/* -------------------------
+   Rendering
+--------------------------*/
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // background vignette
+  ctx.fillStyle = 'rgba(0,0,0,0.12)';
+  ctx.fillRect(0,0,canvas.width/devicePixelRatioCached, canvas.height/devicePixelRatioCached);
+
+  const cw = canvas.width / devicePixelRatioCached;
+  const ch = canvas.height / devicePixelRatioCached;
+  const topPadding = 60;
+  const levelData = currentLevelData;
+  if(!levelData) return;
+  const grid = levelData.grid;
+  const rows = levelData.rows, cols = levelData.cols;
+  // draw grid bubbles
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
-      const {x,y,cell} = gridToXY(startR+r,startC+c);
-      ctx.fillStyle = ( (r===Math.floor(rows/2) && c===Math.floor(cols/2)) ? COLOR_MAP[color] : 'rgba(255,255,255,0.01)' );
-      ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
+      const cell = grid[r][c];
+      if(!cell) continue;
+      const pos = getCellXY(r,c,rows,cols,cw,topPadding);
+      drawBubble(pos.x, pos.y, pos.radius, cell);
     }
   }
-  // center big triangle or square
-  const centerR = startR + Math.floor(rows/2), centerC = startC + Math.floor(cols/2);
-  const {x,y,cell} = gridToXY(centerR, centerC);
-  LCTX.fillStyle = COLOR_MAP[color];
-  LCTX.globalAlpha = 0.12;
-  LCTX.beginPath();
-  LCTX.arc(x,y,cell*1.3,0,Math.PI*2);
-  LCTX.fill();
-  LCTX.globalAlpha = 1;
-}
 
-/* draw home columns from entry -> center for each color
-   Each has 6 steps; we map them to virtual positions 100..105 for red, 200..205 green, 300..305 yellow, 400..405 blue
-   We'll draw the column cells on board near center
-*/
-function drawHomeColumns(){
-  const ctx = LCTX;
-  // center coords for home path mapping:
-  // red: from MAIN_POS[0] toward center (7,7)
-  const centerR = 7, centerC = 7;
-  const colorOrder = ['red','green','yellow','blue'];
-  const entryPosIdx = [START_IDX.red, START_IDX.green, START_IDX.yellow, START_IDX.blue];
-  for(let pi=0;pi<4;pi++){
-    const entry = MAIN_POS[ entryPosIdx[pi] ];
-    // compute vector towards center
-    const steps = [];
-    const dr = Math.sign(centerR - entry.r);
-    const dc = Math.sign(centerC - entry.c);
-    // We'll step 6 times from entry towards center; ensure unique cells
-    let r = entry.r, c = entry.c;
-    for(let s=0;s<6;s++){
-      r = r + ((centerR - r) !== 0 ? Math.sign(centerR - r) : 0);
-      c = c + ((centerC - c) !== 0 ? Math.sign(centerC - c) : 0);
-      steps.push({r,c});
-    }
-    // draw each
-    for(let s=0;s<steps.length;s++){
-      const {x,y,cell} = gridToXY(steps[s].r, steps[s].c);
-      ctx.fillStyle = '#0b2630';
-      ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(255,255,255,0.02)';
-      ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
-    }
+  // draw floating projectiles
+  state.anim.projectiles.forEach(p=>{
+    drawBall(p.x, p.y, p.radius, p);
+  });
+
+  // draw shooter
+  const shooter = state.shooter;
+  const sx = cw/2, sy = ch - 60;
+  drawShooterBase(sx, sy);
+
+  // draw aiming line if no projectile in motion
+  if(state.shooter && state.shooter.ball && state.anim.projectiles.length === 0){
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 2;
+    ctx.moveTo(sx, sy);
+    const endX = sx + Math.cos(shooter.angle) * 300;
+    const endY = sy + Math.sin(shooter.angle) * 300;
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
   }
+
+  // draw next ball preview
+  drawNextPreview();
+
+  // draw UI overlays: remaining bubbles
+  const remaining = countRemainingBubbles();
+  document.getElementById('uiRemaining').textContent = `Bubbles left: ${remaining}`;
+  const percent = Math.max(0, 1 - remaining / (levelInitialCount || 1));
+  document.getElementById('levelBar').style.width = `${Math.floor(percent*100)}%`;
+
+  // update HUD
+  document.getElementById('uiScore').textContent = state.score;
+  document.getElementById('uiLevel').textContent = state.levelIndex;
+  document.getElementById('uiQueue').textContent = state.shooter.queue.map(q=>colorName(q.color)).slice(0,5).join(', ') || '--';
+  document.getElementById('uiShots').textContent = state.shooter.shots;
 }
 
-/* draw a token given player index, token index and pos value (-1 base, 0..51 main, 100+ home)
-*/
-function drawToken(playerIndex, tokenIndex, pos){
-  const ctx = LCTX;
-  const color = COLORS[playerIndex];
-  let x,y;
-  if(pos === -1){
-    // base: place tokens inside player's home quadrant cluster
-    const basePositions = {
-      0: [{r:1,c:1},{r:1,c:3},{r:3,c:1},{r:3,c:3}], // red top-left
-      1: [{r:1,c:11},{r:1,c:13},{r:3,c:11},{r:3,c:13}], // green top-right
-      2: [{r:11,c:11},{r:11,c:13},{r:13,c:11},{r:13,c:13}], // yellow bottom-right
-      3: [{r:11,c:1},{r:11,c:3},{r:13,c:1},{r:13,c:3}] // blue bottom-left
-    };
-    const gp = basePositions[playerIndex][tokenIndex];
-    const pxy = gridToXY(gp.r,gp.c);
-    x = pxy.x; y = pxy.y;
-  } else if(pos>=0 && pos<52){
-    const gp = MAIN_POS[pos];
-    const pxy = gridToXY(gp.r,gp.c);
-    x = pxy.x; y = pxy.y;
+/* helper draw functions */
+function drawBubble(x,y,r,cell){
+  // cell: {color: index, special: null|'stone'|'wild'}
+  const grad = ctx.createRadialGradient(x-r*0.3,y-r*0.4, r*0.1, x,y, r*1.2);
+  if(cell.special === 'wild'){
+    grad.addColorStop(0, '#fff'); grad.addColorStop(0.5, '#ffd36b'); grad.addColorStop(1,'#ff6b6b');
   } else {
-    // home pos: encode as 100+player*10 + step (0..5)
-    // For simplicity we map: red 100+, green 200+, yellow 300+, blue 400+
-    const playerBase = 100 + playerIndex*100;
-    const step = pos - playerBase;
-    // compute home step positions same as drawHomeColumns order earlier
-    const entry = MAIN_POS[ START_IDX[ COLORS[playerIndex] ] ];
-    let r = entry.r, c = entry.c;
-    for(let s=0;s<=step;s++){
-      r = r + ((7 - r) !== 0 ? Math.sign(7 - r) : 0);
-      c = c + ((7 - c) !== 0 ? Math.sign(7 - c) : 0);
-    }
-    const pxy = gridToXY(r,c);
-    x = pxy.x; y = pxy.y;
+    grad.addColorStop(0, shadeColor(COLORS[cell.color], 0.25));
+    grad.addColorStop(0.9, COLORS[cell.color]);
   }
-  // draw circle token
-  ctx.beginPath();
-  ctx.fillStyle = COLOR_MAP[color];
-  ctx.shadowColor = 'rgba(0,0,0,0.5)';
-  ctx.shadowBlur = 10;
-  ctx.shadowOffsetY = 4;
-  ctx.arc(x,y,12,0,Math.PI*2); ctx.fill();
-  ctx.shadowBlur=0; ctx.shadowOffsetY=0;
-  ctx.fillStyle = '#fff'; ctx.font='11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(String(tokenIndex+1), x, y);
-}
-
-/* Ludo movement helpers and rules */
-function indexToMainIndex(index){ return index; } // identity for main 0..51
-
-function posToString(p){
-  if(p === -1) return 'base';
-  if(p>=0 && p<52) return 'm'+p;
-  return 'h'+p;
-}
-
-/* Compute distance along main track from posA to posB (0..51). If posA or posB not on main, returns null */
-function mainDistance(a,b){
-  if(a<0 || a>=52 || b<0 || b>=52) return null;
-  return (b - a + 52) % 52;
-}
-
-/* Convert player token pos to progress (how near to finish)
-   For tokens in home (100+), count large progress
-*/
-function tokenProgress(playerIndex, pos){
-  const start = START_IDX[ COLORS[playerIndex] ];
-  if(pos === -1) return 0;
-  if(pos>=0 && pos<52){
-    return (pos - start + 52) % 52;
+  ctx.beginPath(); ctx.fillStyle = grad; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  // border and shine
+  ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 2; ctx.arc(x,y,r-1,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.ellipse(x - r*0.35, y - r*0.45, r*0.45, r*0.25, Math.PI/4, 0, Math.PI*2); ctx.fill();
+  // special markers
+  if(cell.special === 'stone'){
+    ctx.beginPath(); ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.arc(x,y, r*0.6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#cbd5e1'; ctx.font = `${r*0.6}px Inter`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('•', x, y);
   }
-  // home positions encoded as 100 + player*100 + step
-  const base = 100 + playerIndex*100;
-  if(pos >= base) {
-    const step = pos - base;
-    return 52 + step; // beyond main track
-  }
-  return 0;
 }
 
-/* Legal moves for a player given roll */
-function legalMoves(playerIndex, roll){
-  const arr = ludoState.positions[playerIndex];
-  const moves = [];
-  const start = START_IDX[ COLORS[playerIndex] ];
-  for(let t=0;t<4;t++){
-    const pos = arr[t];
-    if(pos === -1){
-      if(roll === 6) moves.push({token:t, from:-1, to:start});
+/* draw moving ball (projectile) */
+function drawBall(x,y,r,p){
+  const grad = ctx.createRadialGradient(x-r*0.3,y-r*0.3, r*0.1, x,y, r*1.2);
+  if(p.special === 'wild'){
+    grad.addColorStop(0, '#fff'); grad.addColorStop(0.5, '#ffd36b'); grad.addColorStop(1,'#ff6b6b');
+  } else {
+    grad.addColorStop(0, shadeColor(COLORS[p.color], 0.3)); grad.addColorStop(1, COLORS[p.color]);
+  }
+  ctx.beginPath(); ctx.fillStyle = grad; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1.6; ctx.arc(x,y,r-1,0,Math.PI*2); ctx.stroke();
+}
+
+/* draw shooter base */
+function drawShooterBase(x,y){
+  ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.02)'; ctx.arc(x,y,38,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.fillStyle = '#081426'; ctx.arc(x,y,34,0,Math.PI*2); ctx.fill();
+  // draw cannon tip in direction
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(state.shooter.angle + Math.PI/2);
+  ctx.fillStyle = '#0ea5a5';
+  ctx.fillRect(-8, -52, 16, 44);
+  ctx.restore();
+}
+
+/* draw next preview */
+function drawNextPreview(){
+  nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
+  const q = state.shooter.queue[0] || state.shooter.ball;
+  if(!q) return;
+  const cx = 28, cy = 28, r=20;
+  const grad = nctx.createRadialGradient(cx - r*0.3, cy - r*0.4, r*0.15, cx, cy, r*1.2);
+  if(q.special === 'wild'){ grad.addColorStop(0, '#fff'); grad.addColorStop(0.5, '#ffd36b'); grad.addColorStop(1,'#ff6b6b'); }
+  else { grad.addColorStop(0, shadeColor(COLORS[q.color], 0.3)); grad.addColorStop(1, COLORS[q.color]); }
+  nctx.beginPath(); nctx.fillStyle = grad; nctx.arc(cx,cy,r,0,Math.PI*2); nctx.fill();
+}
+
+/* small util: color label (index -> name) */
+function colorName(index){
+  if(index === undefined || index === null) return '--';
+  return ['Red','Yellow','Green','Cyan','Purple','Peach'][index] || 'Color';
+}
+
+/* shade color helper */
+function shadeColor(hex, percent){
+  // hex -> rgb -> lighter
+  const c = hex.replace('#','');
+  const num = parseInt(c,16);
+  const r = Math.min(255, Math.floor(((num >> 16) & 0xff) * (1+percent)));
+  const g = Math.min(255, Math.floor(((num >> 8) & 0xff) * (1+percent)));
+  const b = Math.min(255, Math.floor(((num) & 0xff) * (1+percent)));
+  return `rgb(${r},${g},${b})`;
+}
+
+/* -------------------------
+   Game logic: placement & collision
+--------------------------*/
+let currentLevelData = null;
+let levelInitialCount = 0;
+
+function loadLevel(index){
+  index = clamp(index, 1, TOTAL_LEVELS);
+  state.levelIndex = index;
+  // generate level
+  currentLevelData = generateLevel(index);
+  levelInitialCount = countGrid(currentLevelData.grid);
+  // reset shooter and queue
+  state.shooter.queue = [];
+  // create initial ball and several in queue
+  for(let i=0;i<3;i++) state.shooter.queue.push( {color: rand(currentLevelData.colorCount), special: null} );
+  state.shooter.ball = state.shooter.queue.shift();
+  // reset projectiles
+  state.anim.projectiles = [];
+  state.shooter.shots = 0;
+  draw(); saveProgress();
+  updateUIUnlocked();
+}
+
+/* Count bubbles in grid */
+function countGrid(grid){
+  let total = 0;
+  for(const r of grid) for(const c of r) if(c) total++;
+  return total;
+}
+function countRemainingBubbles(){ if(!currentLevelData) return 0; return countGrid(currentLevelData.grid); }
+
+/* Shooting: create projectile from shooter */
+function shoot(angle, specialOverride){
+  if(!currentLevelData) return;
+  if(state.anim.projectiles.length > 0) return; // allow one at a time
+  const cw = canvas.width / devicePixelRatioCached, ch = canvas.height / devicePixelRatioCached;
+  const sx = cw/2, sy = ch - 60;
+  const ball = state.shooter.ball || {color: rand(currentLevelData.colorCount), special:null};
+  if(specialOverride) ball.special = specialOverride;
+  const speed = 860; // px/sec
+  const p = {x:sx, y:sy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, radius: CELL_RADIUS*0.9, color: ball.color, special: ball.special, createdAt: Date.now()};
+  state.anim.projectiles.push(p);
+  state.shooter.ball = state.shooter.queue.shift() || {color: rand(currentLevelData.colorCount), special:null};
+  state.shooter.queue.push( {color: rand(currentLevelData.colorCount), special:null} );
+  state.shooter.shots++;
+  state.lastActionTime = Date.now();
+}
+
+/* physics & collision per frame */
+let lastFrameTime = performance.now();
+function update(){
+  const now = performance.now();
+  const dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  if(!currentLevelData) { draw(); requestAnimationFrame(update); return; }
+  // update projectiles
+  const cw = canvas.width / devicePixelRatioCached;
+  const ch = canvas.height / devicePixelRatioCached;
+  const topPadding = 60;
+  const grid = currentLevelData.grid;
+  const rows = currentLevelData.rows, cols = currentLevelData.cols;
+  for(let i = state.anim.projectiles.length - 1; i >= 0; i--){
+    const p = state.anim.projectiles[i];
+    // integrate
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    // reflect on walls
+    if(p.x - p.radius <= 10){ p.x = 10 + p.radius; p.vx *= -1; }
+    if(p.x + p.radius >= cw - 10){ p.x = cw - 10 - p.radius; p.vx *= -1; }
+    // check top
+    if(p.y - p.radius <= topPadding){
+      // snap to nearest grid cell on top row
+      const row = 0;
+      const col = findNearestColumn(p.x, row, rows, cols, cw, topPadding);
+      placeBallAt(row, col, p);
+      state.anim.projectiles.splice(i,1);
       continue;
     }
-    // if in home (pos >=100), compute home step target
-    const base = 100 + playerIndex*100;
-    if(pos >= base){
-      const step = pos - base;
-      const targetStep = step + roll;
-      if(targetStep <= 5){ // need exact to reach final
-        moves.push({token:t, from:pos, to: base + targetStep});
+    // check collision with any bubble
+    let collided = false;
+    outer:
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const cell = grid[r][c];
+        if(!cell) continue;
+        const pos = getCellXY(r,c,rows,cols,cw,topPadding);
+        const dx = p.x - pos.x, dy = p.y - pos.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist <= p.radius + pos.radius - 2){
+          // we will place in neighbor cell adjacent to this point: compute nearest empty neighbor coordinate
+          const target = findPlacementAround(r,c,p.x,p.y, rows, cols, cw, topPadding);
+          if(target){
+            placeBallAt(target.r, target.c, p);
+          } else {
+            // if no neighbor found, fallback to nearest cell of collision
+            placeBallAt(r,c,p);
+          }
+          state.anim.projectiles.splice(i,1);
+          collided = true;
+          break outer;
+        }
       }
-      continue;
     }
-    // pos on main track -> compute move along main track
-    const rel = (pos - start + 52) % 52;
-    let newRel = rel + roll;
-    if(newRel > 51){
-      // enter home: newRel - 52 -> home step (0..)
-      const homeStep = newRel - 52;
-      if(homeStep <= 5) moves.push({token:t, from:pos, to: 100 + playerIndex*100 + homeStep});
-      // else overshoot -> not allowed
+    // remove if too slow or off bottom (shouldn't)
+    if(p.y - p.radius > ch + 200){ state.anim.projectiles.splice(i,1); }
+  }
+
+  draw();
+  requestAnimationFrame(update);
+}
+requestAnimationFrame(update);
+
+/* find nearest column at row for x coordinate */
+function findNearestColumn(x, row, rows, cols, cw, topPadding){
+  let best = 0; let bestDist = 1e9;
+  for(let c=0;c<cols;c++){
+    const pos = getCellXY(row,c,rows,cols,cw,topPadding);
+    const d = Math.abs(pos.x - x);
+    if(d < bestDist){ bestDist = d; best = c; }
+  }
+  return best;
+}
+
+/* find placement around collided cell: check neighbors in expanding order for an empty cell close to collision point */
+function findPlacementAround(r,c,x,y, rows, cols, cw, topPadding){
+  const neighborOffsets = [
+    {dr:0,dc:1},{dr:0,dc:-1},{dr:1,dc:0},{dr:-1,dc:0},{dr:1,dc:1},{dr:1,dc:-1},{dr:-1,dc:1},{dr:-1,dc:-1}
+  ];
+  // include current cell (as fallback)
+  const tried = [];
+  for(const off of neighborOffsets){
+    const nr = r + off.dr, nc = c + off.dc;
+    if(nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+    if(!currentLevelData.grid[nr][nc]) {
+      tried.push({r:nr,c:nc});
+    }
+  }
+  // sort by distance to collision point
+  tried.sort((a,b)=>{
+    const pa = getCellXY(a.r,a.c,rows,cols,cw,topPadding);
+    const pb = getCellXY(b.r,b.c,rows,cols,cw,topPadding);
+    const da = Math.hypot(pa.x-x, pa.y-y);
+    const db = Math.hypot(pb.x-x, pb.y-y);
+    return da-db;
+  });
+  return tried[0] || null;
+}
+
+/* place ball into grid cell and trigger match logic */
+function placeBallAt(r,c, projectile){
+  // bounds check
+  if(r < 0 || r >= currentLevelData.rows || c < 0 || c >= currentLevelData.cols) return;
+  // if cell occupied, try to find nearest empty in same row
+  if(currentLevelData.grid[r][c]){
+    // search left/right for empty
+    let found = false;
+    for(let d=1; d<currentLevelData.cols; d++){
+      if(c-d >= 0 && !currentLevelData.grid[r][c-d]) { c=c-d; found=true; break; }
+      if(c+d < currentLevelData.cols && !currentLevelData.grid[r][c+d]) { c=c+d; found=true; break; }
+    }
+    if(!found) {
+      // if no place found, put at nearest empty row above
+      for(let rr=r-1; rr>=0; rr--){
+        for(let cc=0; cc<currentLevelData.cols; cc++){
+          if(!currentLevelData.grid[rr][cc]) { r=rr; c=cc; found=true; break; }
+        }
+        if(found) break;
+      }
+      if(!found) return;
+    }
+  }
+
+  // place bubble: if the cell is a stone and projectile is not fire, it cannot be placed directly (but we allow placement by converting stone)
+  if(currentLevelData.grid[r][c] && currentLevelData.grid[r][c].special === 'stone'){
+    // stone occupied - if projectile is fireball it will destroy, else we treat as blocked
+    if(projectile.special === 'fire'){
+      currentLevelData.grid[r][c] = null; // destroyed
     } else {
-      const newPos = (start + newRel) % 52;
-      moves.push({token:t, from:pos, to:newPos});
+      // cannot place on stone - find nearest empty instead
+      // attempt to find neighbor empty
+      const nb = findPlacementAround(r,c, projectile.x, projectile.y, currentLevelData.rows, currentLevelData.cols, canvas.width/devicePixelRatioCached, 60);
+      if(nb) { currentLevelData.grid[nb.r][nb.c] = {color: projectile.color, special: projectile.special === 'wild' ? 'wild' : null}; }
+      else return;
     }
-  }
-  return moves;
-}
-
-/* Apply move */
-function applyMove(playerIndex, move){
-  // push to history
-  ludoHistory.push(JSON.stringify(ludoState));
-  const arr = ludoState.positions[playerIndex];
-  const token = move.token;
-  arr[token] = move.to;
-  // handle capture if moved to main board
-  if(move.to>=0 && move.to<52){
-    for(let p=0;p<ludoState.positions.length;p++){
-      if(p===playerIndex) continue;
-      for(let t=0;t<4;t++){
-        if(ludoState.positions[p][t] === move.to && !SAFE_INDICES.includes(move.to)){
-          ludoState.positions[p][t] = -1;
-          logLudo(`${ludoState.players[playerIndex].name} captured ${ludoState.players[p].name}'s token ${t+1}!`);
-        }
-      }
-    }
-  }
-  // check if finished (all tokens in final home cell)
-  const base = 100 + playerIndex*100;
-  if(ludoState.positions[playerIndex].every(p => p >= base && p <= base+5)){
-    ludoState.finished[playerIndex] = true;
-    ludoState.winners.push(ludoState.players[playerIndex].name);
-    logLudo(`${ludoState.players[playerIndex].name} finished!`);
-  }
-}
-
-/* Next active player */
-function advanceTurn(skip = false){
-  // If current rolled a 6 and not skip, keep same player (handled externally)
-  const n = ludoState.players.length;
-  for(let i=1;i<=n;i++){
-    const cand = (ludoState.active + i) % n;
-    if(!ludoState.finished[cand]){ ludoState.active = cand; break; }
-  }
-  ludoState.dice = null; ludoState.rolled = false;
-  renderLudo();
-  if(ludoState.players[ludoState.active].type === 'bot') {
-    setTimeout(()=>botTurn(ludoState.active), 600);
-  }
-}
-
-/* Bot logic */
-function botTurn(playerIndex){
-  if(!ludoState || ludoState.players[playerIndex].type!=='bot') return;
-  // if not rolled yet, roll
-  if(!ludoState.rolled){
-    rollDice(); return;
-  }
-  const roll = ludoState.dice;
-  const level = Number($('#botLevel').value);
-  const moves = legalMoves(playerIndex, roll);
-  if(moves.length === 0){
-    logLudo(`${ludoState.players[playerIndex].name} has no move.`);
-    // if rolled 6 -> still gets turn but no moves: we'll advance
-    if(roll === 6){ /* still stays? classic Ludo gives extra turn only after moving; here just advance */ }
-    advanceTurn();
-    return;
-  }
-  // pick move by heuristics
-  let chosen = moves[rand(moves.length)];
-  if(level >= 2){
-    // prefer capture
-    for(const m of moves){
-      if(m.to>=0 && m.to<52){
-        for(let p=0;p<ludoState.positions.length;p++){
-          if(p===playerIndex) continue;
-          for(let t=0;t<4;t++){
-            if(ludoState.positions[p][t] === m.to && !SAFE_INDICES.includes(m.to)){
-              chosen = m; break;
-            }
-          }
-        }
-      }
-      if(chosen === m) break;
-    }
-    // prefer moving out
-    for(const m of moves) if(m.from === -1) { chosen = m; break; }
-  }
-  if(level >= 3){
-    // avoid landing on spot where opponent can capture in next immediate move (basic)
-    moves.sort((a,b)=> tokenProgress(playerIndex, b.to) - tokenProgress(playerIndex, a.to));
-    for(const m of moves){
-      let safe = true;
-      for(let p=0;p<ludoState.positions.length;p++){
-        if(p===playerIndex) continue;
-        for(let t=0;t<4;t++){
-          const opp = ludoState.positions[p][t];
-          if(opp>=0 && opp<52 && m.to>=0 && m.to<52){
-            const dist = (m.to - opp + 52) % 52;
-            if(dist <= 6) { safe = false; break; }
-          }
-        }
-        if(!safe) break;
-      }
-      if(safe){ chosen = m; break; }
-    }
-  }
-  // perform move
-  applyMove(playerIndex, chosen);
-  renderLudo();
-  // if roll 6 -> same player gets another turn
-  if(ludoState.dice === 6 && !ludoState.finished[playerIndex]){
-    ludoState.rolled = false; ludoState.dice = null;
-    setTimeout(()=>{ if(ludoState.players[playerIndex].type==='bot') botTurn(playerIndex); }, 600);
-    return;
   } else {
-    advanceTurn();
+    // place normally
+    currentLevelData.grid[r][c] = {color: projectile.color, special: projectile.special === 'wild' ? 'wild' : null};
   }
-}
 
-/* Roll dice triggered by user or bot */
-function rollDice(){
-  if(!ludoState) return;
-  if(ludoState.rolled) return;
-  const r = Math.floor(Math.random()*6)+1;
-  ludoState.dice = r; ludoState.rolled = true;
-  logLudo(`${ludoState.players[ludoState.active].name} rolled ${r}.`);
-  renderLudo();
-  // if current is bot, perform move after small delay
-  if(ludoState.players[ludoState.active].type === 'bot'){
-    setTimeout(()=>botTurn(ludoState.active), 800);
-  }
-}
-
-/* Player click handling: when dice rolled and human player's turn, click token to move */
-LUDOCANVAS.addEventListener('click', function(e){
-  if(!ludoState) return;
-  const rect = LUDOCANVAS.getBoundingClientRect();
-  const x = e.clientX - rect.left, y = e.clientY - rect.top;
-  // find clicked token (closest)
-  let clicked = null;
-  for(let p=0;p<ludoState.positions.length;p++){
-    for(let t=0;t<4;t++){
-      const pos = ludoState.positions[p][t];
-      let xy;
-      if(pos === -1){
-        const basePositions = {
-          0: [{r:1,c:1},{r:1,c:3},{r:3,c:1},{r:3,c:3}],
-          1: [{r:1,c:11},{r:1,c:13},{r:3,c:11},{r:3,c:13}],
-          2: [{r:11,c:11},{r:11,c:13},{r:13,c:11},{r:13,c:13}],
-          3: [{r:11,c:1},{r:11,c:3},{r:13,c:1},{r:13,c:3}]
-        };
-        const gp = basePositions[p][t];
-        xy = gridToXY(gp.r, gp.c);
-      } else if(pos>=0 && pos<52){
-        const gp = MAIN_POS[pos];
-        xy = gridToXY(gp.r,gp.c);
-      } else {
-        const base = 100 + p*100, step = pos - base;
-        let r = MAIN_POS[ START_IDX[COLORS[p]] ].r, c = MAIN_POS[ START_IDX[COLORS[p]] ].c;
-        for(let s=0;s<=step;s++){ r += Math.sign(7-r); c += Math.sign(7-c); }
-        xy = gridToXY(r,c);
-      }
-      const dx = xy.x - x, dy = xy.y - y;
-      if(Math.sqrt(dx*dx+dy*dy) < 18){
-        clicked = {player:p, token:t}; break;
-      }
-    }
-    if(clicked) break;
-  }
-  if(!clicked) return;
-  // only allow move if clicked player is active and human and dice rolled
-  if(clicked.player !== ludoState.active) {
-    logLudo('Not this player turn.');
-    return;
-  }
-  if(ludoState.players[clicked.player].type === 'bot'){
-    logLudo('This is a bot player.');
-    return;
-  }
-  if(!ludoState.rolled){ logLudo('Roll the dice first.'); return; }
-  const moves = legalMoves(clicked.player, ludoState.dice).filter(m => m.token === clicked.token);
-  if(moves.length === 0){
-    logLudo('This token cannot move with current roll.');
-    return;
-  }
-  // If multiple moves exist for same token (rare), pick first
-  const move = moves[0];
-  applyMove(clicked.player, move);
-  renderLudo();
-  if(ludoState.dice === 6 && !ludoState.finished[clicked.player]){
-    // same player again
-    ludoState.rolled = false; ludoState.dice = null;
-    renderLudo();
-    return;
+  // if projectile was fireball, destroy neighbors in radius
+  if(projectile.special === 'fire'){
+    destroyArea(r,c,2); // radius 2 cells
   } else {
-    advanceTurn();
+    // check cluster of same color (wild matches anything)
+    const cluster = gatherCluster(r,c, currentLevelData.grid);
+    // cluster should ignore 'stone' and require matching color or wild
+    if(cluster.length >= 3){
+      // remove cluster
+      cluster.forEach(cell => currentLevelData.grid[cell.r][cell.c] = null);
+      state.score += cluster.length * 10;
+      // after popping, remove floating clusters
+      removeFloatingClusters();
+    } else {
+      // no pop, simple placement
+    }
   }
-});
 
-/* UI: players settings rendering */
-function renderPlayersUI(){
-  const wrap = $('#playerSettings');
-  wrap.innerHTML = '';
-  ludoState.players.forEach((p,i)=>{
-    const row = document.createElement('div'); row.className = 'playerRow';
-    const colorBox = document.createElement('div'); colorBox.style.width='12px'; colorBox.style.height='12px'; colorBox.style.borderRadius='4px'; colorBox.style.background = COLOR_MAP[COLORS[i]];
-    const nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value = p.name; nameInp.style.width='110px';
-    nameInp.addEventListener('change', ()=> { ludoState.players[i].name = nameInp.value; renderLudo(); });
-    const sel = document.createElement('select');
-    sel.innerHTML = `<option value="human">Human</option><option value="bot">Bot</option>`;
-    sel.value = p.type;
-    sel.addEventListener('change', ()=>{ ludoState.players[i].type = sel.value; renderLudo(); });
-    row.appendChild(colorBox); row.appendChild(nameInp); row.appendChild(sel);
-    wrap.appendChild(row);
-  });
+  // update score and UI
+  levelInitialCount = levelInitialCount || countGrid(currentLevelData.grid);
+  // check win condition
+  const remaining = countRemainingBubbles();
+  if(remaining === 0){
+    onLevelComplete();
+  }
+  saveProgress();
 }
 
-/* Undo */
-$('#undoBtn').addEventListener('click', ()=>{
-  if(ludoHistory.length === 0){ logLudo('Nothing to undo'); return; }
-  const prev = ludoHistory.pop();
-  ludoState = JSON.parse(prev);
-  renderLudo(); renderPlayersUI();
-  logLudo('Undo performed.');
-});
-
-/* Save/load */
-$('#saveLudo').addEventListener('click', ()=> saveLudo());
-$('#loadLudo').addEventListener('click', ()=> loadLudo());
-
-/* New Game button uses current UI players config */
-$('#newBtn').addEventListener('click', ()=>{
-  // Build players array from UI if present
-  const rows = $('#playerSettings').querySelectorAll('.playerRow');
-  if(rows.length === 0) { resetLudoDefault(); return; }
-  const players = [];
-  for(let i=0;i<rows.length;i++){
-    const name = rows[i].querySelector('input').value || `P${i+1}`;
-    const type = rows[i].querySelector('select').value;
-    players.push({name,type});
+/* gather cluster by flood fill from r,c where match if same color or wild present */
+function gatherCluster(r,c, grid){
+  const start = grid[r][c];
+  if(!start) return [];
+  const visited = {};
+  const result = [];
+  const stack = [{r,c}];
+  while(stack.length){
+    const cur = stack.pop();
+    const key = `${cur.r},${cur.c}`;
+    if(visited[key]) continue;
+    visited[key] = true;
+    const cell = grid[cur.r] && grid[cur.r][cur.c];
+    if(!cell) continue;
+    // match logic: cell matches if same color OR either is wild
+    const match = (cell.special === 'wild') || (start.special === 'wild') || (cell.color === start.color);
+    if(match){
+      result.push({r:cur.r, c:cur.c});
+      const neighbors = getNeighbors(cur.r, cur.c, grid.length, grid[0].length);
+      neighbors.forEach(n => {
+        if(!visited[`${n.r},${n.c}`]) stack.push(n);
+      });
+    }
   }
-  ludoState = {
-    players,
-    positions: players.map(()=>[-1,-1,-1,-1]),
-    active: 0,
-    dice: null,
-    rolled: false,
-    finished: players.map(()=>false),
-    winners: []
-  };
-  ludoHistory = [];
-  logLudo('New game started with players: ' + players.map(p=>p.name+'('+p.type+')').join(', '));
-  renderLudo();
-  renderPlayersUI();
-});
-
-/* Roll button */
-$('#rollBtn').addEventListener('click', ()=> rollDice());
-
-/* Initialize Ludo */
-resetLudoDefault();
-
-/* Space to roll quickly */
-document.addEventListener('keydown',(e)=>{ if(e.code === 'Space'){ e.preventDefault(); if(!ludoState.rolled) rollDice(); }} );
-
-/* -------------------------------------------------------
-   QUIZ: improved randomization and larger bank
---------------------------------------------------------*/
-const QUESTION_BANK = [
-  {q:"What is the capital of France?", a:["Paris","Berlin","Rome","Madrid"], correct:0},
-  {q:"Which planet is known as the Red Planet?", a:["Mars","Venus","Jupiter","Saturn"], correct:0},
-  {q:"Who wrote 'Romeo and Juliet'?", a:["Shakespeare","Dickens","Hemingway","Tolstoy"], correct:0},
-  {q:"What is 7 x 8?", a:["56","54","48","49"], correct:0},
-  {q:"Which element has symbol O?", a:["Oxygen","Gold","Iron","Hydrogen"], correct:0},
-  {q:"What year did the first man land on the Moon?", a:["1969","1959","1979","1989"], correct:0},
-  {q:"What currency is used in Japan?", a:["Yen","Dollar","Euro","Won"], correct:0},
-  {q:"What is the largest ocean on Earth?", a:["Pacific","Atlantic","Indian","Arctic"], correct:0},
-  {q:"Who painted the Mona Lisa?", a:["Leonardo da Vinci","Van Gogh","Picasso","Rembrandt"], correct:0},
-  {q:"Which language powers most webpages?", a:["JavaScript","Python","C++","Ruby"], correct:0},
-  {q:"Which gas do plants mainly use for photosynthesis?", a:["Carbon dioxide","Oxygen","Nitrogen","Helium"], correct:0},
-  {q:"What is H2O commonly known as?", a:["Water","Hydrogen peroxide","Salt","Alcohol"], correct:0},
-  {q:"Which continent is Egypt in?", a:["Africa","Asia","Europe","South America"], correct:0},
-  {q:"Who discovered penicillin?", a:["Alexander Fleming","Louis Pasteur","Marie Curie","Gregor Mendel"], correct:0},
-  {q:"What is the boiling point of water at sea level (°C)?", a:["100","90","80","70"], correct:0},
-  {q:"What color do you get by mixing red and blue?", a:["Purple","Green","Orange","Brown"], correct:0},
-  {q:"Which instrument has keys, pedals and strings?", a:["Piano","Guitar","Drums","Trumpet"], correct:0},
-  {q:"Which is the smallest prime number?", a:["2","1","3","5"], correct:0},
-  {q:"What is the chemical symbol for gold?", a:["Au","Ag","Gd","Go"], correct:0},
-  {q:"What is the largest land animal?", a:["Elephant","Giraffe","Rhino","Hippo"], correct:0},
-  {q:"What does HTML stand for?", a:["HyperText Markup Language","Home Tool Markup Language","Hyperlinks Text Markup Language","HighText Machine Language"], correct:0},
-  {q:"Which country invented paper?", a:["China","Egypt","Greece","India"], correct:0},
-  {q:"What gas do humans exhale?", a:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"], correct:0},
-  {q:"Which organ purifies blood in the human body?", a:["Kidney","Heart","Lungs","Liver"], correct:0},
-  {q:"Which is the hottest planet in our solar system?", a:["Venus","Mercury","Mars","Jupiter"], correct:0}
-];
-
-let quizState = {pool:[], idx:0, score:0, size:10};
-function startQuiz(){
-  const size = Math.max(3, Math.min(100, Number($('#qCount').value||10)));
-  quizState.size = size;
-  const pool = shuffle(QUESTION_BANK.slice());
-  quizState.pool = pool.slice(0, size).map(q => ({...q, opts: shuffle(q.a.map((t,i)=>({text:t, idx:i}))) }));
-  quizState.idx = 0; quizState.score = 0;
-  $('#qScore').textContent = quizState.score;
-  $('#qLeft').textContent = quizState.size - quizState.idx;
-  showQuizQuestion();
+  return result;
 }
-function showQuizQuestion(){
-  const q = quizState.pool[quizState.idx];
-  if(!q){ $('#qText').textContent='No more questions'; $('#qAnswers').innerHTML=''; return; }
-  $('#qText').textContent = `${quizState.idx+1}. ${q.q}`;
-  const wrap = $('#qAnswers'); wrap.innerHTML = '';
-  q.opts.forEach(opt=>{
-    const b = document.createElement('button'); b.className = 'ghost'; b.style.width = '100%'; b.textContent = opt.text;
-    b.addEventListener('click', ()=>{
-      // disable all
-      [...wrap.children].forEach(ch=>ch.disabled = true);
-      if(opt.idx === q.correct){ b.style.border='2px solid #10b981'; quizState.score++; $('#qScore').textContent = quizState.score; }
-      else {
-        b.style.border='2px solid #ef4444';
-        // highlight correct
-        [...wrap.children].forEach(ch=>{
-          if(ch.textContent === q.a[q.correct]) ch.style.border='2px solid #10b981';
-        });
-      }
-      $('#qLeft').textContent = quizState.size - (quizState.idx+1);
+
+/* get neighbor coordinates for hex-like offset: 6-neighbors */
+function getNeighbors(r,c,rows,cols){
+  const neighbors = [];
+  const offsets = [
+    {dr:0,dc:1},{dr:0,dc:-1},{dr:1,dc:0},{dr:-1,dc:0},{dr:1,dc: (r%2===0? -1:1)},{dr:-1,dc:(r%2===0? -1:1)}
+  ];
+  for(const o of offsets){
+    const nr = r + o.dr, nc = c + o.dc;
+    if(nr >= 0 && nr < rows && nc >= 0 && nc < cols) neighbors.push({r:nr,c:nc});
+  }
+  return neighbors;
+}
+
+/* remove floating clusters (not connected to top row) */
+function removeFloatingClusters(){
+  const grid = currentLevelData.grid;
+  const rows = currentLevelData.rows, cols = currentLevelData.cols;
+  const visited = {};
+  // mark all bubbles connected to top row
+  const connected = {};
+  const stack = [];
+  for(let c=0;c<cols;c++){
+    if(grid[0][c]) stack.push({r:0,c});
+  }
+  while(stack.length){
+    const cur = stack.pop();
+    const key = `${cur.r},${cur.c}`;
+    if(visited[key]) continue;
+    visited[key] = true;
+    connected[key] = true;
+    const neigh = getNeighbors(cur.r, cur.c, rows, cols);
+    neigh.forEach(n=>{
+      if(grid[n.r][n.c] && !visited[`${n.r},${n.c}`]) stack.push(n);
     });
-    wrap.appendChild(b);
-  });
+  }
+  // any bubble not in connected should fall (be removed)
+  let removedCount = 0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(grid[r][c]){
+        const key = `${r},${c}`;
+        if(!connected[key]){
+          // if stone, it becomes stone-less? We'll remove it (drop)
+          grid[r][c] = null;
+          removedCount++;
+        }
+      }
+    }
+  }
+  if(removedCount > 0) state.score += removedCount * 5;
 }
-$('#startQuiz').addEventListener('click', ()=> startQuiz());
-$('#nextQuiz').addEventListener('click', ()=>{
-  quizState.idx++;
-  if(quizState.idx >= quizState.size){ alert(`Quiz finished: ${quizState.score}/${quizState.size}`); return; }
-  showQuizQuestion();
+
+/* destroy area (fireball) */
+function destroyArea(centerR, centerC, radiusCells){
+  const grid = currentLevelData.grid;
+  const rows = currentLevelData.rows, cols = currentLevelData.cols;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const dist = Math.hypot(centerR - r, centerC - c);
+      if(dist <= radiusCells && grid[r][c]){
+        grid[r][c] = null;
+      }
+    }
+  }
+  removeFloatingClusters();
+  state.score += 25;
+}
+
+/* on level complete */
+function onLevelComplete(){
+  // simple awarding and move to next level
+  const earned = 100 + Math.floor(currentLevelData.rows * 10);
+  state.score += earned;
+  state.unlocked = Math.max(state.unlocked, state.levelIndex + 1);
+  saveProgress();
+  // visual feedback
+  toast(`Level ${state.levelIndex} cleared! +${earned} pts`);
+  // auto-advance after small delay
+  setTimeout(()=> {
+    if(state.levelIndex < TOTAL_LEVELS) {
+      loadLevel(state.levelIndex + 1);
+    } else {
+      toast('Congratulations — you completed all generated levels!');
+    }
+  }, 900);
+}
+
+/* -------------------------
+   Input handling
+--------------------------*/
+let isPointerDown = false;
+let pointerX = 0, pointerY = 0;
+canvas.addEventListener('mousemove', (e)=>{
+  const rect = canvas.getBoundingClientRect();
+  pointerX = (e.clientX - rect.left);
+  pointerY = (e.clientY - rect.top);
+  updateAim();
 });
-
-/* -------------------------------------------------------
-   2048 Puzzle implementation (classic)
---------------------------------------------------------*/
-let g2048 = {size:4, grid:[], score:0, previous:null};
-function new2048(size=4){
-  g2048.size = size; g2048.grid = Array(size*size).fill(0); g2048.score = 0; g2048.previous = null;
-  addRandomTile(); addRandomTile();
-  render2048();
-}
-function idx(r,c){ return r * g2048.size + c; }
-function outOfBounds(r,c){ return r<0 || r>=g2048.size || c<0 || c>=g2048.size; }
-function addRandomTile(){
-  const empties = [];
-  g2048.grid.forEach((v,i)=>{ if(v===0) empties.push(i);});
-  if(empties.length===0) return false;
-  const i = empties[rand(empties.length)];
-  g2048.grid[i] = Math.random() < 0.9 ? 2 : 4;
-  return true;
-}
-function render2048(){
-  $('#pScore').textContent = g2048.score;
-  const wrap = $('#grid2048');
-  const n = g2048.size;
-  wrap.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-  wrap.style.width = Math.min(420, n*80) + 'px';
-  wrap.style.height = Math.min(420, n*80) + 'px';
-  wrap.innerHTML = '';
-  for(let r=0;r<n;r++){
-    for(let c=0;c<n;c++){
-      const v = g2048.grid[idx(r,c)];
-      const d = document.createElement('div'); d.className = 'tile2048';
-      d.style.background = v===0 ? 'rgba(255,255,255,0.02)' : tileColor(v);
-      d.style.fontSize = v<128 ? '22px' : '18px';
-      d.textContent = v===0 ? '' : v;
-      wrap.appendChild(d);
-    }
-  }
-}
-function tileColor(v){
-  const colors = {2:'#eee4da',4:'#ede0c8',8:'#f2b179',16:'#f59563',32:'#f67c5f',64:'#f65e3b',128:'#edcf72',256:'#edcc61',512:'#edc850',1024:'#edc53f',2048:'#edc22e'};
-  return colors[v] || '#3c3a32';
-}
-function move2048(dir){
-  // Save previous for undo
-  g2048.previous = {grid: g2048.grid.slice(), score: g2048.score};
-  let moved=false;
-  const n = g2048.size;
-  const merged = Array(n*n).fill(false);
-  const loop = (r,c,dr,dc) => {
-    const cur = idx(r,c);
-    if(g2048.grid[cur] === 0) return;
-    let rr = r, cc = c;
-    while(true){
-      const nr = rr + dr, nc = cc + dc;
-      if(outOfBounds(nr,nc)) break;
-      const ni = idx(nr,nc);
-      if(g2048.grid[ni] === 0){
-        g2048.grid[ni] = g2048.grid[idx(rr,cc)];
-        g2048.grid[idx(rr,cc)] = 0;
-        rr = nr; cc = nc; moved = true;
-      } else if(g2048.grid[ni] === g2048.grid[idx(rr,cc)] && !merged[ni]){
-        // merge
-        g2048.grid[ni] *= 2;
-        g2048.score += g2048.grid[ni];
-        g2048.grid[idx(rr,cc)] = 0;
-        merged[ni] = true;
-        moved = true;
-        break;
-      } else break;
-    }
-  };
-  if(dir === 'left'){
-    for(let r=0;r<n;r++) for(let c=0;c<n;c++) loop(r,c,0,-1);
-  } else if(dir==='right'){
-    for(let r=0;r<n;r++) for(let c=n-1;c>=0;c--) loop(r,c,0,1);
-  } else if(dir==='up'){
-    for(let c=0;c<n;c++) for(let r=0;r<n;r++) loop(r,c,-1,0);
-  } else if(dir==='down'){
-    for(let c=0;c<n;c++) for(let r=n-1;r>=0;r--) loop(r,c,1,0);
-  }
-  if(moved){ addRandomTile(); render2048(); }
-  return moved;
-}
-function undo2048(){
-  if(g2048.previous){ g2048.grid = g2048.previous.grid.slice(); g2048.score = g2048.previous.score; g2048.previous = null; render2048(); }
-}
-function aiMove2048(){
-  // very simple heuristic: try moves in order up,left,right,down and pick first that changes grid
-  const attempts = ['up','left','right','down'];
-  for(const d of attempts){
-    const copy = g2048.grid.slice(), sc = g2048.score;
-    const ok = move2048(d);
-    if(ok) return;
-    g2048.grid = copy; g2048.score = sc;
-  }
-}
-
-/* 2048 controls */
-$('#new2048').addEventListener('click', ()=> new2048(Number($('#gSize').value)));
-$('#undo2048').addEventListener('click', ()=> undo2048());
-$('#ai2048').addEventListener('click', ()=> aiMove2048());
-$('#gSize').addEventListener('change', ()=> new2048(Number($('#gSize').value)));
-
-/* keyboard for 2048 */
+canvas.addEventListener('touchmove', (e)=>{ e.preventDefault(); const t = e.touches[0]; const rect = canvas.getBoundingClientRect(); pointerX = (t.clientX - rect.left); pointerY = (t.clientY - rect.top); updateAim(); }, {passive:false});
+canvas.addEventListener('click', (e)=> {
+  // shoot
+  if(!currentLevelData) return;
+  const angle = state.shooter.angle;
+  shoot(angle);
+});
 document.addEventListener('keydown', (e)=>{
-  if($('#puzzle').style.display === 'flex'){
-    if(e.key === 'ArrowLeft'){ e.preventDefault(); move2048('left'); }
-    if(e.key === 'ArrowRight'){ e.preventDefault(); move2048('right'); }
-    if(e.key === 'ArrowUp'){ e.preventDefault(); move2048('up'); }
-    if(e.key === 'ArrowDown'){ e.preventDefault(); move2048('down'); }
-  }
+  if(e.code === 'Space'){ e.preventDefault(); if(currentLevelData) shoot(state.shooter.angle); }
+  if(e.key === '1') { useWild(); }
+  if(e.key === '2') { useFire(); }
 });
 
-/* initialize 2048 */
-new2048(4);
+function updateAim(){
+  const cw = canvas.width / devicePixelRatioCached, ch = canvas.height / devicePixelRatioCached;
+  const sx = cw/2, sy = ch - 60;
+  const dx = pointerX - sx, dy = pointerY - sy;
+  let angle = Math.atan2(dy, dx);
+  // clamp angle to upper half
+  const min = -Math.PI + 0.2, max = -0.2;
+  angle = clamp(angle, min, max);
+  state.shooter.angle = angle;
+}
 
-/* -------------------------------------------------------
-   Init: small helpers and start
---------------------------------------------------------*/
-function tileClicked(msg){ console.log(msg); }
+/* abilities */
+function useWild(){
+  if(state.abilities.wild <= 0) { toast('No Wild Balls available'); return; }
+  if(state.anim.projectiles.length > 0) return; // wait until shot ends
+  // set next ball special:
+  state.shooter.ball = {color:0, special:'wild'}; // color irrelevant
+  state.abilities.wild--;
+  toast('Wild Ball ready — next shot is wildcard.');
+  saveProgress();
+}
+function useFire(){
+  if(state.abilities.fire <= 0) { toast('No Fireballs available'); return; }
+  if(state.anim.projectiles.length > 0) return;
+  state.shooter.ball = {color:0, special:'fire'};
+  state.abilities.fire--;
+  toast('Fireball ready — clears area on impact.');
+  saveProgress();
+}
 
-renderLudo();
-renderPlayersUI();
+/* -------------------------
+   UI wiring & helpers
+--------------------------*/
+document.getElementById('btnWild').addEventListener('click', ()=> useWild());
+document.getElementById('btnFire').addEventListener('click', ()=> useFire());
+document.getElementById('btnReset').addEventListener('click', ()=> {
+  if(confirm('Reset progress and restart at level 1?')){
+    localStorage.removeItem(SAVE_KEY);
+    state.levelIndex = 1; state.score = 0; state.unlocked = 1; state.abilities = {wild:1, fire:1};
+    loadLevel(1);
+  }
+});
+document.getElementById('btnNext').addEventListener('click', ()=> {
+  if(state.levelIndex < TOTAL_LEVELS) loadLevel(state.levelIndex + 1);
+});
+document.getElementById('btnPrev').addEventListener('click', ()=> {
+  if(state.levelIndex > 1) loadLevel(state.levelIndex - 1);
+});
+document.getElementById('btnSelect').addEventListener('click', ()=> openLevelModal());
+document.getElementById('closeModal').addEventListener('click', ()=> closeLevelModal());
+document.getElementById('btnHelp').addEventListener('click', ()=> alert('Aim with mouse/touch and click to shoot. Press 1 for Wild Ball (matches any color). Press 2 for Fireball (area destroy). Clear all bubbles to win the level.'));
 
-/* End of file */
+function updateUIUnlocked(){
+  document.getElementById('uiUnlocked').textContent = state.unlocked;
+  document.getElementById('totalLevels').textContent = TOTAL_LEVELS;
+  document.getElementById('achieves').textContent = (state.score > 1000 ? 'Scored 1000+' : 'None yet - keep playing');
+}
+
+/* level modal */
+function openLevelModal(){
+  const modal = document.getElementById('levelModal');
+  const list = document.getElementById('levelList');
+  list.innerHTML = '';
+  for(let i=1;i<=TOTAL_LEVELS;i++){
+    const card = document.createElement('div');
+    card.style.padding='10px'; card.style.borderRadius='8px'; card.style.background='rgba(255,255,255,0.02)'; card.style.textAlign='center';
+    card.style.cursor = i <= state.unlocked ? 'pointer' : 'not-allowed';
+    card.innerHTML = `<div style="font-weight:600">Level ${i}</div><div style="font-size:12px;color:#9fb0c7">${i <= state.unlocked ? 'Unlocked' : 'Locked'}</div>`;
+    if(i <= state.unlocked){
+      card.addEventListener('click', ()=> { loadLevel(i); closeLevelModal(); });
+    }
+    list.appendChild(card);
+  }
+  modal.style.display='flex'; modal.setAttribute('aria-hidden','false');
+}
+function closeLevelModal(){ const modal=document.getElementById('levelModal'); modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+
+/* toast */
+let toastTimer = null;
+function toast(msg){
+  const overlay = document.getElementById('overlay');
+  overlay.innerHTML = `<div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);background:linear-gradient(90deg,#ffb86b,#ff7b7b);color:#081022;padding:8px 14px;border-radius:10px;font-weight:700">${msg}</div>`;
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ overlay.innerHTML=''; }, 1400);
+}
+
+/* -------------------------
+   Utilities for cluster logic test & debug
+--------------------------*/
+function getEmptyGrid(rows, cols){ return Array.from({length:rows}, ()=> Array.from({length:cols}, ()=> null)); }
+
+/* -------------------------
+   Startup & persistence
+--------------------------*/
+loadProgress();
+updateUIUnlocked();
+loadLevel(state.levelIndex);
+
+// initial draw tick at 60fps for smooth aiming visuals
+(function rafLoop(){ draw(); requestAnimationFrame(rafLoop); })();
+
+/* small helper to color text for debug (unused) */
+/* End of script */
 </script>
 </body>
 </html>
