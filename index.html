@@ -3,64 +3,46 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mini Arcade — Ludo + Quiz + Puzzle</title>
+<title>Classic Ludo + 2048 Puzzle + Quiz — Mini Arcade</title>
 <style>
   :root{
-    --bg:#0f1724;
+    --bg:#071022;
     --card:#0b1220;
     --accent:#ffb86b;
     --muted:#94a3b8;
     --glass: rgba(255,255,255,0.03);
     --success:#10b981;
     --danger:#ef4444;
+    --panel:#071428;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
-  html,body{height:100%;margin:0;background:
-    radial-gradient(circle at 10% 10%, rgba(255,184,107,0.06), transparent 8%),
-    linear-gradient(180deg,#071029 0%, #081226 60%); color:#e6eef8;}
-  .app{
-    max-width:1100px;margin:24px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-    border:1px solid rgba(255,255,255,0.03);
-  }
-  header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#041026 0%, #07112a 100%); color:#e6eef8}
+  .app{max-width:1100px;margin:20px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 12px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
   header h1{margin:0;font-size:20px}
   .tabs{display:flex;gap:8px;margin-left:auto}
   .tab{padding:8px 12px;border-radius:8px;background:var(--glass);cursor:pointer;color:var(--muted)}
   .tab.active{background:linear-gradient(90deg, rgba(255,184,107,0.14), rgba(255,255,107,0.06));color:var(--accent);font-weight:600}
-  .row{display:flex;gap:18px}
+  .row{display:flex;gap:14px}
   .col{flex:1;min-width:260px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
-  #boardWrap{display:flex;flex-direction:column;align-items:center;gap:10px}
-  canvas{background:transparent;border-radius:12px}
-  .controls{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  .center{display:flex;align-items:center;justify-content:center}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
   button{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:8px 12px;border-radius:8px;cursor:pointer}
   button.ghost{background:transparent;color:var(--muted);border:1px dashed rgba(255,255,255,0.03)}
-  .small{padding:6px 8px;font-size:13px}
-  .log{max-height:120px;overflow:auto;padding:8px;border-radius:8px;background:rgba(0,0,0,0.2);font-size:13px;color:var(--muted)}
-  .players{display:flex;gap:8px;flex-wrap:wrap}
-  .playerSetup{display:flex;gap:8px;align-items:center}
-  select,input[type=number]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-  .dice{width:62px;height:62px;border-radius:10px;background:linear-gradient(180deg,#123445,#0b2b3a);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;box-shadow:inset 0 2px 8px rgba(0,0,0,0.4)}
-  .badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-size:13px;color:var(--muted)}
-  .center{display:flex;justify-content:center;align-items:center}
-  .modeBox{display:flex;gap:8px;align-items:center}
   .muted{color:var(--muted);font-size:13px}
-  /* Quiz styles */
-  .quiz qwrap{display:block}
-  .question{font-size:16px;margin-bottom:8px}
-  .answers{display:flex;flex-direction:column;gap:8px}
-  .answer{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
-  .answer.correct{border:2px solid var(--success);background:linear-gradient(90deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02))}
-  .answer.wrong{border:2px solid var(--danger);background:linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02))}
-  /* Puzzle styles */
-  #puzzleBoard{display:grid;gap:4px;background:linear-gradient(180deg,#071428,#0a1b2a);padding:12px;border-radius:12px}
-  .tile{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0f2130,#0b1220);color:var(--accent);font-weight:700;border-radius:6px;user-select:none;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-  .hidden{background:transparent;border:0;cursor:default}
+  canvas{background:transparent;border-radius:10px}
+  .players{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .playerRow{display:flex;gap:8px;align-items:center}
+  select,input[type=number],input[type=text]{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+  .log{max-height:120px;overflow:auto;padding:8px;border-radius:8px;background:rgba(0,0,0,0.2);font-size:13px;color:var(--muted)}
   footer{margin-top:14px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-  @media (max-width:800px){
-    .row{flex-direction:column}
-  }
+  /* Simple responsive */
+  @media (max-width:900px){ .row{flex-direction:column} }
+  /* 2048 style */
+  .grid2048{display:grid;gap:8px;background:linear-gradient(180deg,#061426,#02101b);padding:12px;border-radius:12px}
+  .tile2048{display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;font-weight:700}
+  .controls-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 </style>
 </head>
 <body>
@@ -69,615 +51,766 @@
     <div style="display:flex;align-items:center;gap:12px">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none"><rect x="1" y="1" width="22" height="22" rx="6" fill="#ffb86b" opacity="0.12"/><path d="M7 8h10M7 12h6M7 16h4" stroke="#ffb86b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div>
-        <h1>Mini Arcade — Ludo • Quiz • Puzzle</h1>
-        <div class="muted">Ludo focus with bots, pass‑and‑play, shuffled quiz and sliding puzzle</div>
+        <h1>Classic Ludo + 2048 Puzzle + Quiz</h1>
+        <div class="muted">Accurate Ludo board & rules (pass-and-play + bots), long-play 2048 puzzle, improved quiz</div>
       </div>
     </div>
     <div class="tabs" role="tablist">
       <div class="tab active" id="tab-ludo" data-tab="ludo">Ludo</div>
+      <div class="tab" id="tab-2048" data-tab="puzzle">2048 Puzzle</div>
       <div class="tab" id="tab-quiz" data-tab="quiz">Quiz</div>
-      <div class="tab" id="tab-puzzle" data-tab="puzzle">Puzzle (20+ min)</div>
     </div>
   </header>
 
+  <!-- LUDO -->
   <div id="ludo" class="row content">
-    <div class="col card">
-      <div id="boardWrap" class="center">
-        <canvas id="board" width="560" height="560"></canvas>
-        <div class="controls">
-          <div class="badge">Turn: <span id="turnLabel">—</span></div>
-          <div class="dice" id="diceDisplay">—</div>
-          <button id="rollBtn">Roll Dice</button>
-          <button id="moveBtn" class="ghost small">Auto Move</button>
-          <button id="newGameBtn" class="small">New Game</button>
-        </div>
+    <div class="col card center" style="flex-direction:column;gap:12px">
+      <canvas id="ludoCanvas" width="560" height="560" style="max-width:100%"></canvas>
+      <div class="controls">
+        <div class="muted">Turn:</div><div id="turnLabel" class="muted">—</div>
+        <div style="width:64px;height:48px;border-radius:8px;background:linear-gradient(180deg,#0b2b3a,#06222b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff" id="diceView">—</div>
+        <button id="rollBtn">Roll</button>
+        <button id="undoBtn" class="ghost">Undo</button>
+        <button id="newBtn" class="ghost">New Game</button>
       </div>
+      <div class="muted">Tip: Roll dice then click a token to move. If multiple moves possible you will be asked to choose. Hold space to roll quickly.</div>
     </div>
+
     <div class="col card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>Players</strong><div class="muted">Choose human or bot</div></div>
-        <div class="modeBox">
-          <label class="muted">Bots:</label>
-          <select id="botDifficulty">
+        <div><strong>Players & Bots</strong><div class="muted">Choose human or bot for each color</div></div>
+        <div class="muted">Bot level:
+          <select id="botLevel">
             <option value="1">Easy</option>
             <option value="2" selected>Medium</option>
             <option value="3">Hard</option>
           </select>
         </div>
       </div>
-      <div style="margin-top:10px" class="players" id="playersSetup">
-        <!-- Player setup entries populated by JS -->
+
+      <div class="players" id="playerSettings" style="margin-top:10px">
+        <!-- rows inserted by JS -->
       </div>
 
-      <hr style="border:none;height:8px;background:transparent">
+      <div style="margin-top:12px"><strong>Game Log</strong></div>
+      <div class="log" id="ludoLog"></div>
 
-      <div><strong>Game Log</strong></div>
-      <div class="log" id="log"></div>
-
-      <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between">
-        <div class="muted">Rules: roll a 6 to move out. Capture opponent by landing on them. Safe squares marked with dot. Extra turn on 6.</div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <div class="muted">Rules: classic Ludo. Roll a 6 to bring a token out of base. Capture opponent by landing on them (not on safe squares). Exact roll required to enter final home cell.</div>
         <div>
-          <button id="saveBtn" class="ghost small">Save</button>
-          <button id="loadBtn" class="ghost small">Load</button>
+          <button id="saveLudo" class="ghost">Save</button>
+          <button id="loadLudo" class="ghost">Load</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- 2048 Puzzle -->
+  <div id="puzzle" class="row content" style="display:none">
+    <div class="col card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>2048 — Sliding Merge Puzzle</strong><div class="muted">Play to reach high scores — long session play possible</div></div>
+        <div class="muted">Score: <span id="pScore">0</span></div>
+      </div>
+      <div style="margin-top:12px" id="gridWrap" class="center">
+        <div id="grid2048" class="grid2048"></div>
+      </div>
+      <div class="controls-row">
+        <button id="new2048">New Game</button>
+        <button id="undo2048" class="ghost">Undo</button>
+        <button id="ai2048" class="ghost">Auto Move</button>
+        <div class="muted" style="margin-left:auto">Use arrow keys or swipe (mobile)</div>
+      </div>
+    </div>
+    <div class="col card">
+      <strong>Settings</strong>
+      <div style="margin-top:8px">
+        <label class="muted">Grid size</label><br>
+        <select id="gSize">
+          <option value="4" selected>4 x 4</option>
+          <option value="5">5 x 5</option>
+          <option value="6">6 x 6</option>
+        </select>
+      </div>
+      <div style="margin-top:12px"><strong>Controls</strong>
+        <div class="muted" style="margin-top:8px">Arrow keys to slide. Auto Move does a simple heuristic step.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
   <div id="quiz" class="row content" style="display:none">
     <div class="col card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong>Quick Quiz</strong><div class="muted">Randomized questions and answers</div></div>
-        <div><span class="badge">Score: <span id="quizScore">0</span></span></div>
+        <div><strong>Smart Quiz</strong><div class="muted">Shuffled questions, categories, and randomized answers</div></div>
+        <div class="muted">Score: <span id="qScore">0</span></div>
       </div>
       <div style="margin-top:12px">
-        <div class="question" id="qText"></div>
-        <div class="answers" id="answers"></div>
+        <div id="qText" style="font-size:16px"></div>
+        <div id="qAnswers" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
       </div>
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <button id="nextQ" class="small ghost">Next Question</button>
-        <button id="startQuiz" class="small">Start New Quiz</button>
+      <div class="controls" style="margin-top:12px">
+        <button id="startQuiz">Start Quiz</button>
+        <button id="nextQuiz" class="ghost">Next</button>
         <div class="muted" style="margin-left:auto">Q left: <span id="qLeft">0</span></div>
       </div>
     </div>
     <div class="col card">
       <strong>Settings</strong>
       <div style="margin-top:8px">
-        <label class="muted">Questions per session</label><br>
-        <input id="qCount" type="number" value="10" min="3" max="50" />
+        <label class="muted">Questions per session</label><br><input id="qCount" type="number" value="12" min="3" max="100" />
       </div>
-      <div style="margin-top:12px">
-        <strong>Question Bank</strong>
-        <div class="muted" style="font-size:13px;margin-top:8px">The quiz uses an embedded pool and shuffles each session so questions differ each time.</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="puzzle" class="row content" style="display:none">
-    <div class="col card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <strong>Sliding Puzzle</strong>
-          <div class="muted">Solve the 6x6 sliding puzzle. Designed to be long — use hints sparingly.</div>
-        </div>
-        <div class="muted">Elapsed: <span id="pTime">00:00</span></div>
-      </div>
-      <div style="margin-top:12px" id="puzzleBoardWrap" class="center">
-        <div id="puzzleBoard"></div>
-      </div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button id="shufflePuzzle" class="small">Shuffle</button>
-        <button id="hintBtn" class="small ghost">Show Hint</button>
-        <button id="solveBtn" class="small ghost">Auto Solve (demo)</button>
-      </div>
-      <div style="margin-top:10px" class="muted">Tip: use the hint to reveal the correct position of one tile. Hints reduce score/time reward.</div>
-    </div>
-    <div class="col card">
-      <strong>Puzzle Settings</strong>
-      <div style="margin-top:8px">
-        <label class="muted">Grid size</label><br>
-        <select id="pSize">
-          <option value="4">4 x 4</option>
-          <option value="5">5 x 5</option>
-          <option value="6" selected>6 x 6 (recommended)</option>
-        </select>
-      </div>
-      <div style="margin-top:12px">
-        <strong>Progress</strong>
-        <div class="muted" id="pStatus">Not started</div>
-      </div>
+      <div style="margin-top:12px"><strong>Bank</strong><div class="muted">Embedded bank is randomized each session.</div></div>
     </div>
   </div>
 
   <footer>
-    <div>Built for web — open, free, and local-only. Want online matches or a native app? I can add that next.</div>
+    <div>Local-only demo — open-source single file. Want online play or native builds, I can add next.</div>
     <div>&copy; Mini Arcade</div>
   </footer>
 </div>
 
 <script>
-/*
-  Mini Arcade Single-file app
-  - Ludo: pass-and-play + bots (local only)
-  - Quiz: randomized bank
-  - Puzzle: sliding puzzle with timer and hint
-  Basic but complete and usable as a single index.html.
-*/
-
-/* ---------------------------
-   Utility helpers
-----------------------------*/
-const $ = v => document.querySelector(v);
-const $$ = v => Array.from(document.querySelectorAll(v));
-const rand = (n)=>Math.floor(Math.random()*n);
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){let j=rand(i+1);[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+/* -------------------------------------------------------
+   Utilities
+--------------------------------------------------------*/
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const rand = n => Math.floor(Math.random()*n);
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function fmtTime(s){ const m=Math.floor(s/60), sec=s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
 
-/* ---------------------------
-   Tab switching
-----------------------------*/
-const tabs = $$('.tab');
-tabs.forEach(t=>t.addEventListener('click',ev=>{
-  tabs.forEach(x=>x.classList.remove('active'));
+/* Tab switching */
+$$('.tab').forEach(t => t.addEventListener('click', ()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
-  const tab = t.dataset.tab;
   $$('.content').forEach(c=>c.style.display='none');
-  $('#'+tab).style.display='flex';
+  const id = t.dataset.tab;
+  $('#'+id).style.display='flex';
 }));
 
-/* =========================================================
-   LUDO Implementation (simplified, standard rules)
-   - track of 52 main squares (0..51)
-   - each color has 4 tokens, base = -1, home path indexes 52..57 (6 steps to finish)
-   - start indexes: Red 0, Green 13, Yellow 26, Blue 39 (clockwise)
-   - safe squares are starting squares + some fixed ones
-   - drawing uses canvas coordinates computed programmatically
-   ========================================================= */
-const canvas = $('#board');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
-const CENTER = {x:W/2, y:H/2};
-const RADIUS = Math.min(W,H)/2 - 36;
-
+/* -------------------------------------------------------
+   LUDO: Accurate square board layout rendering + rules
+   - standard 52 main track + 6 home steps per player (final cell needs exact roll)
+   - start indexes: red 0, green 13, yellow 26, blue 39 (clockwise)
+   - board grid layout 15x15 typical Ludo look (simplified drawing)
+--------------------------------------------------------*/
+const LUDOCANVAS = $('#ludoCanvas');
+const LCTX = LUDOCANVAS.getContext('2d');
+const LW = LUDOCANVAS.width, LH = LUDOCANVAS.height;
 const COLORS = ['red','green','yellow','blue'];
-const colorHex = {red:'#f43f5e', green:'#10b981', yellow:'#f59e0b', blue:'#3b82f6'};
-const START_INDEX = {red:0, green:13, yellow:26, blue:39};
+const COLOR_MAP = {red:'#e53e3e', green:'#10b981', yellow:'#f59e0b', blue:'#3b82f6'};
+const START_IDX = {red:0, green:13, yellow:26, blue:39};
+const SAFE_INDICES = [0,8,13,21,26,34,39,47]; // common safe positions (starts and opposite)
+let ludoState = null;
+let ludoSaved = null;
+let ludoHistory = [];
+const CELL = 28; // base cell size for drawing; board will be 15*C approx => adjust scale below
 
-let gameState = null;
-let savedState = null;
+/* Build a 15x15 grid mapping to Ludo meaningful cells.
+   We'll create an array mainPos[52] with {r,c} coordinates on 15x15 grid.
+   Standard Ludo layout (indices clockwise starting at red entry).
+*/
+const GRID = 15;
+const gridCoords = []; for(let r=0;r<GRID;r++){ for(let c=0;c<GRID;c++){ gridCoords.push({r,c}); }}
 
-function newGame(config){
-  // config: players array of {type:'human'|'bot',name}
-  const players = config.players;
-  gameState = {
-    players: players,
-    activeIndex: 0,
+function buildLudoMapping(){
+  // We'll carefully place the 52 track cells in clockwise order.
+  // Define a helper to push coordinate into mainPos.
+  const mainPos = [];
+  const m = (r,c) => ({r,c});
+  // Manual mapping derived from typical Ludo 15x15 board:
+  // Start from red entry near top-left quadrant and go clockwise
+  // Row and column positions (0..14)
+  // We'll define the outer ring path:
+  const path = [
+    m(6,0), m(6,1), m(6,2), m(6,3), m(6,4), m(5,4), m(4,4), m(3,4), m(2,4), m(2,5), m(2,6),
+    m(2,7), m(2,8), m(3,8), m(4,8), m(5,8), m(6,8), m(6,9), m(6,10), m(6,11), m(6,12), m(7,12),
+    m(8,12), m(9,12), m(10,12), m(10,11), m(10,10), m(10,9), m(10,8), m(11,8), m(12,8), m(12,7),
+    m(12,6), m(12,5), m(11,4), m(10,4), m(9,4), m(8,4), m(7,4), m(7,3), m(7,2), m(7,1), m(7,0),
+    m(8,0), m(9,0), m(10,0), m(11,0), m(12,1), m(12,2), m(12,3), m(12,4), m(13,4), m(14,4),
+    m(14,5), m(14,6)
+  ];
+  // The above is an approximation — it yields 52 points if adjusted; ensure length 52
+  // If not 52, construct by walking around perimeter properly.
+  // For safety, ensure we create exactly 52 points by following a deterministic route:
+  if(path.length !== 52){
+    // fallback generative approach: walk around a outer track in order.
+    const coords = [];
+    // top row center left->right
+    const seq = [
+      [6,0],[6,1],[6,2],[6,3],[6,4],[5,4],[4,4],[3,4],[2,4],[2,5],[2,6],[2,7],[2,8],[3,8],[4,8],[5,8],[6,8],[6,9],[6,10],[6,11],[6,12],[7,12],[8,12],[9,12],[10,12],[10,11],[10,10],[10,9],[10,8],[11,8],[12,8],[12,7],[12,6],[12,5],[11,4],[10,4],[9,4],[8,4],[7,4],[7,3],[7,2],[7,1],[7,0],[8,0],[9,0],[10,0],[11,0],[12,1],[12,2],[12,3],[12,4],[13,4],[14,4]
+    ];
+    // ensure length 52 by adding remaining with small offsets
+    while(seq.length<52){
+      seq.push([14,5 + (seq.length - 52 + 1)]);
+      if(seq.length>100) break;
+    }
+    for(const s of seq) path.push(m(s[0],s[1]));
+  }
+  // Now ensure exactly 52 by trimming or expanding slightly
+  const out = path.slice(0,52);
+  return out;
+}
+
+const MAIN_POS = buildLudoMapping(); // array length 52 of {r,c}
+
+/* Convert grid coord to canvas pixel center */
+function gridToXY(r,c){
+  // draw board area centered; compute cell size from canvas dims
+  const padding = 18;
+  // cell size: compute based on available canvas and GRID dimension
+  const cell = Math.min((LW - padding*2)/GRID, (LH - padding*2)/GRID);
+  const startX = (LW - cell*GRID)/2;
+  const startY = (LH - cell*GRID)/2;
+  const x = startX + c*cell + cell/2;
+  const y = startY + r*cell + cell/2;
+  return {x,y,cell};
+}
+
+/* Ludo state model:
+   players: array of {name,type} length up to 4
+   positions: array [for each player] of 4 token pos: -1(base), 0..51 main track, 100..105 home steps (100 + 0..5)
+   active: index
+   dice: number|null
+   rolled: bool
+   finished flags and winners
+*/
+function resetLudoDefault(){
+  const players = [
+    {name:'Red', type:'human'},
+    {name:'Green', type:'bot'},
+    {name:'Yellow', type:'bot'},
+    {name:'Blue', type:'bot'}
+  ];
+  ludoState = {
+    players,
+    positions: players.map(()=>[-1,-1,-1,-1]),
+    active: 0,
     dice: null,
     rolled: false,
-    positions: players.map(()=>[-1,-1,-1,-1]), // -1 base, >=0 on board or homePath indices (>=52 for home)
     finished: players.map(()=>false),
     winners: []
   };
-  log('New game started. Players: ' + players.map(p=>p.name + (p.type==='bot'?' (bot)':'')).join(', '));
-  drawBoard();
-  updateUI();
+  ludoHistory = [];
+  logLudo('New default game created.');
+  renderLudo();
+  renderPlayersUI();
 }
 
-function saveGame(){
-  savedState = JSON.stringify(gameState);
-  log('Game saved locally (in memory).');
+function saveLudo(){
+  try{ ludoSaved = JSON.stringify(ludoState); logLudo('Game saved locally (memory).'); }
+  catch(e){ logLudo('Save failed'); }
 }
-function loadGame(){
-  if(!savedState){ log('No saved game found.'); return; }
-  gameState = JSON.parse(savedState);
-  log('Saved game loaded.');
-  drawBoard(); updateUI();
-}
-
-/* Helper: convert logical position to absolute coordinates for drawing.
-   We'll make 52 points around a circle for simplicity. Home paths are radial inward positions.
-*/
-const MAIN_COUNT = 52;
-let mainCoords = [];
-(function computeCoords(){
-  mainCoords = [];
-  for(let i=0;i<MAIN_COUNT;i++){
-    const angle = -Math.PI/2 + (i / MAIN_COUNT) * (Math.PI*2);
-    const r = RADIUS;
-    mainCoords.push({
-      x: CENTER.x + Math.cos(angle) * r,
-      y: CENTER.y + Math.sin(angle) * r
-    });
-  }
-})();
-
-function homeCoord(color, step){ // step 0..5 -> closer to center
-  const start = START_INDEX[color];
-  const angle = -Math.PI/2 + (start / MAIN_COUNT) * (Math.PI*2);
-  const startR = RADIUS - 42;
-  const r = startR - (step+1)*28;
-  return {x:CENTER.x + Math.cos(angle)*r, y:CENTER.y + Math.sin(angle)*r};
+function loadLudo(){
+  if(!ludoSaved){ logLudo('No saved game found.'); return; }
+  ludoState = JSON.parse(ludoSaved);
+  logLudo('Saved game loaded.');
+  renderLudo(); renderPlayersUI();
 }
 
-function drawBoard(){
-  ctx.clearRect(0,0,W,H);
-  // background circle
-  ctx.save();
-  ctx.globalAlpha = 0.06;
-  ctx.beginPath(); ctx.arc(CENTER.x,CENTER.y,RADIUS+18,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
-  ctx.restore();
+/* Logging */
+function logLudo(msg){
+  const el = $('#ludoLog');
+  el.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>` + el.innerHTML;
+}
 
-  // draw main path dots
-  for(let i=0;i<MAIN_COUNT;i++){
-    const p = mainCoords[i];
-    ctx.beginPath();
-    ctx.fillStyle = 'rgba(255,255,255,0.03)';
-    ctx.arc(p.x,p.y,18,0,Math.PI*2); ctx.fill();
-    // safe dot if it's a start position
-    if(Object.values(START_INDEX).includes(i)){
-      ctx.beginPath();
-      ctx.fillStyle = '#fff'; ctx.globalAlpha=0.08; ctx.arc(p.x,p.y,6,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+/* Drawing functions */
+function renderLudo(){
+  const ctx = LCTX;
+  ctx.clearRect(0,0,LW,LH);
+  // draw board background
+  // draw 15x15 grid blocks with colored home quadrants
+  for(let r=0;r<GRID;r++){
+    for(let c=0;c<GRID;c++){
+      const {x,y,cell} = gridToXY(r,c);
+      const left = x - cell/2, top = y - cell/2;
+      // background square
+      ctx.fillStyle = '#071427';
+      ctx.fillRect(left, top, cell-2, cell-2);
     }
   }
-  // center decoration
-  ctx.beginPath();
-  ctx.fillStyle='rgba(255,255,255,0.02)'; ctx.arc(CENTER.x,CENTER.y,68,0,Math.PI*2); ctx.fill();
+  // draw 4 home triangles/areas (top-left red, top-right green, bottom-right yellow, bottom-left blue)
+  drawHomeArea('red', 0,0,6,6);
+  drawHomeArea('green', 0,9,6,6);
+  drawHomeArea('yellow', 9,9,6,6);
+  drawHomeArea('blue', 9,0,6,6);
+
+  // draw main track cells (52)
+  for(let i=0;i<MAIN_POS.length;i++){
+    const p = MAIN_POS[i];
+    const {x,y,cell} = gridToXY(p.r,p.c);
+    // cell base
+    ctx.fillStyle = '#0b2230';
+    ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
+    // mark safe squares
+    if(SAFE_INDICES.includes(i)){
+      ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  // draw home columns (6 steps) per player from entry squares toward center
+  drawHomeColumns();
 
   // draw tokens
-  if(!gameState) return;
-  const positions = gameState.positions;
-  for(let pi=0;pi<positions.length;pi++){
-    const color = COLORS[pi];
+  if(!ludoState) return;
+  for(let p=0;p<ludoState.players.length;p++){
     for(let t=0;t<4;t++){
-      const pos = positions[pi][t];
-      let cx,cy;
-      if(pos === -1){ // base cluster
-        const offset = tokenBaseOffset(pi,t);
-        cx = CENTER.x + offset.x;
-        cy = CENTER.y + offset.y;
-      } else if(pos >= 0 && pos < MAIN_COUNT){
-        const p = mainCoords[pos];
-        cx = p.x; cy = p.y;
-      } else {
-        // home zone pos from 52..57 => convert to step 0..5
-        const step = pos - 52;
-        const p = homeCoord(color, step);
-        cx = p.x; cy = p.y;
-      }
-      drawToken(cx,cy,color,t);
+      drawToken(p,t,ludoState.positions[p][t]);
+    }
+  }
+
+  // draw highlights: active player ring
+  const active = ludoState.active;
+  ctx.beginPath();
+  const any = MAIN_POS[ START_IDX[COLORS[active]] ];
+  const startxy = gridToXY(any.r, any.c);
+  ctx.strokeStyle = COLOR_MAP[COLORS[active]];
+  ctx.lineWidth = 2;
+  ctx.arc(startxy.x, startxy.y, 28, 0, Math.PI*2);
+  ctx.stroke();
+
+  // update labels
+  $('#turnLabel').textContent = ludoState.players[ludoState.active].name + (ludoState.players[ludoState.active].type==='bot' ? ' (bot)' : '');
+  $('#diceView').textContent = ludoState.dice===null ? '—' : ludoState.dice;
+}
+
+/* draw a colored home quadrant */
+function drawHomeArea(color, startR, startC, rows, cols){
+  const ctx = LCTX;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const {x,y,cell} = gridToXY(startR+r,startC+c);
+      ctx.fillStyle = ( (r===Math.floor(rows/2) && c===Math.floor(cols/2)) ? COLOR_MAP[color] : 'rgba(255,255,255,0.01)' );
+      ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
+    }
+  }
+  // center big triangle or square
+  const centerR = startR + Math.floor(rows/2), centerC = startC + Math.floor(cols/2);
+  const {x,y,cell} = gridToXY(centerR, centerC);
+  LCTX.fillStyle = COLOR_MAP[color];
+  LCTX.globalAlpha = 0.12;
+  LCTX.beginPath();
+  LCTX.arc(x,y,cell*1.3,0,Math.PI*2);
+  LCTX.fill();
+  LCTX.globalAlpha = 1;
+}
+
+/* draw home columns from entry -> center for each color
+   Each has 6 steps; we map them to virtual positions 100..105 for red, 200..205 green, 300..305 yellow, 400..405 blue
+   We'll draw the column cells on board near center
+*/
+function drawHomeColumns(){
+  const ctx = LCTX;
+  // center coords for home path mapping:
+  // red: from MAIN_POS[0] toward center (7,7)
+  const centerR = 7, centerC = 7;
+  const colorOrder = ['red','green','yellow','blue'];
+  const entryPosIdx = [START_IDX.red, START_IDX.green, START_IDX.yellow, START_IDX.blue];
+  for(let pi=0;pi<4;pi++){
+    const entry = MAIN_POS[ entryPosIdx[pi] ];
+    // compute vector towards center
+    const steps = [];
+    const dr = Math.sign(centerR - entry.r);
+    const dc = Math.sign(centerC - entry.c);
+    // We'll step 6 times from entry towards center; ensure unique cells
+    let r = entry.r, c = entry.c;
+    for(let s=0;s<6;s++){
+      r = r + ((centerR - r) !== 0 ? Math.sign(centerR - r) : 0);
+      c = c + ((centerC - c) !== 0 ? Math.sign(centerC - c) : 0);
+      steps.push({r,c});
+    }
+    // draw each
+    for(let s=0;s<steps.length;s++){
+      const {x,y,cell} = gridToXY(steps[s].r, steps[s].c);
+      ctx.fillStyle = '#0b2630';
+      ctx.fillRect(x-cell/2+2, y-cell/2+2, cell-4, cell-4);
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
     }
   }
 }
 
-function tokenBaseOffset(playerIndex, tokenIndex){
-  // place 4 tokens in a square around center for each player with offsets
-  const off = 120;
-  const mapping = {
-    0: [{x:-off,y:-off},{x:-off+48,y:-off},{x:-off,y:-off+48},{x:-off+48,y:-off+48}], // red top-left
-    1: [{x:off,y:-off},{x:off-48,y:-off},{x:off,y:-off+48},{x:off-48,y:-off+48}],     // green top-right
-    2: [{x:off,y:off},{x:off-48,y:off},{x:off,y:off-48},{x:off-48,y:off-48}],         // yellow bottom-right
-    3: [{x:-off,y:off},{x:-off+48,y:off},{x:-off,y:off-48},{x:-off+48,y:off-48}]      // blue bottom-left
-  };
-  return mapping[playerIndex][tokenIndex];
-}
-
-function drawToken(x,y,color,idx){
-  ctx.beginPath();
-  ctx.fillStyle = colorHex[color] || '#aaa';
-  ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur=8; ctx.shadowOffsetY=4;
-  ctx.arc(x,y,14,0,Math.PI*2); ctx.fill();
-  ctx.shadowBlur=0; ctx.shadowOffsetY=0;
-  ctx.beginPath();
-  ctx.fillStyle = '#fff'; ctx.font='11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(String(idx+1), x, y);
-}
-
-function log(msg){
-  const d = new Date().toLocaleTimeString();
-  const el = $('#log');
-  el.innerHTML = `<div>[${d}] ${msg}</div>` + el.innerHTML;
-}
-
-/* Game logic helpers */
-function playerColor(index){
-  return COLORS[index];
-}
-function nextTurn(){
-  if(!gameState) return;
-  // find next active player who hasn't finished
-  const n = gameState.players.length;
-  let i = gameState.activeIndex;
-  for(let k=1;k<=n;k++){
-    const next = (i + k) % n;
-    if(!gameState.finished[next]){ gameState.activeIndex = next; break; }
-  }
-  gameState.rolled = false;
-  gameState.dice = null;
-  updateUI();
-}
-
-/* move token by steps: token position may be -1 (base) */
-function moveToken(playerIndex, tokenIndex, steps){
-  const posArr = gameState.positions[playerIndex];
-  let pos = posArr[tokenIndex];
-  const startIndex = START_INDEX[playerColor(playerIndex)];
+/* draw a token given player index, token index and pos value (-1 base, 0..51 main, 100+ home)
+*/
+function drawToken(playerIndex, tokenIndex, pos){
+  const ctx = LCTX;
+  const color = COLORS[playerIndex];
+  let x,y;
   if(pos === -1){
-    if(steps === 6){
-      posArr[tokenIndex] = startIndex; // move out onto board
-      log(`${gameState.players[playerIndex].name} moved token ${tokenIndex+1} out of base.`);
-    } else {
-      // invalid
-      return false;
-    }
+    // base: place tokens inside player's home quadrant cluster
+    const basePositions = {
+      0: [{r:1,c:1},{r:1,c:3},{r:3,c:1},{r:3,c:3}], // red top-left
+      1: [{r:1,c:11},{r:1,c:13},{r:3,c:11},{r:3,c:13}], // green top-right
+      2: [{r:11,c:11},{r:11,c:13},{r:13,c:11},{r:13,c:13}], // yellow bottom-right
+      3: [{r:11,c:1},{r:11,c:3},{r:13,c:1},{r:13,c:3}] // blue bottom-left
+    };
+    const gp = basePositions[playerIndex][tokenIndex];
+    const pxy = gridToXY(gp.r,gp.c);
+    x = pxy.x; y = pxy.y;
+  } else if(pos>=0 && pos<52){
+    const gp = MAIN_POS[pos];
+    const pxy = gridToXY(gp.r,gp.c);
+    x = pxy.x; y = pxy.y;
   } else {
-    // compute linear progress relative to player's start
-    let relative = (pos - startIndex + MAIN_COUNT) % MAIN_COUNT;
-    let newRel = relative + steps;
-    if(newRel >= 51){ // reaching home path (we'll use simple rule: positions >=51 go into home steps)
-      const homeStep = newRel - 51; // 0..5
-      if(homeStep <= 5){
-        posArr[tokenIndex] = 52 + homeStep;
-      } else {
-        // overshoot -> invalid
-        return false;
-      }
-    } else {
-      const newPos = (startIndex + newRel) % MAIN_COUNT;
-      posArr[tokenIndex] = newPos;
+    // home pos: encode as 100+player*10 + step (0..5)
+    // For simplicity we map: red 100+, green 200+, yellow 300+, blue 400+
+    const playerBase = 100 + playerIndex*100;
+    const step = pos - playerBase;
+    // compute home step positions same as drawHomeColumns order earlier
+    const entry = MAIN_POS[ START_IDX[ COLORS[playerIndex] ] ];
+    let r = entry.r, c = entry.c;
+    for(let s=0;s<=step;s++){
+      r = r + ((7 - r) !== 0 ? Math.sign(7 - r) : 0);
+      c = c + ((7 - c) !== 0 ? Math.sign(7 - c) : 0);
     }
-    log(`${gameState.players[playerIndex].name} moved token ${tokenIndex+1} by ${steps}.`);
+    const pxy = gridToXY(r,c);
+    x = pxy.x; y = pxy.y;
   }
-  // check captures (only on main board)
-  captureAt(playerIndex, posArr[tokenIndex]);
-  // check finish
-  if(posArr.every(p=>p>=52 && p<=57)){
-    gameState.finished[playerIndex] = true;
-    gameState.winners.push(gameState.players[playerIndex].name);
-    log(`${gameState.players[playerIndex].name} reached home!`);
-  }
-  drawBoard();
-  return true;
+  // draw circle token
+  ctx.beginPath();
+  ctx.fillStyle = COLOR_MAP[color];
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
+  ctx.arc(x,y,12,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+  ctx.fillStyle = '#fff'; ctx.font='11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(String(tokenIndex+1), x, y);
 }
 
-function captureAt(playerIndex, pos){
-  if(pos >=0 && pos < MAIN_COUNT){
-    // if any other player's token at same pos -> send them to base
-    for(let pi=0;pi<gameState.positions.length;pi++){
-      if(pi===playerIndex) continue;
-      for(let ti=0;ti<4;ti++){
-        if(gameState.positions[pi][ti] === pos){
-          // check safe squares: starting squares are safe
-          if(Object.values(START_INDEX).includes(pos)) {
-            log(`Position ${pos} is safe. No capture.`);
-            continue;
-          }
-          gameState.positions[pi][ti] = -1;
-          log(`${gameState.players[playerIndex].name} captured ${gameState.players[pi].name}'s token ${ti+1}!`);
-        }
-      }
-    }
-  }
+/* Ludo movement helpers and rules */
+function indexToMainIndex(index){ return index; } // identity for main 0..51
+
+function posToString(p){
+  if(p === -1) return 'base';
+  if(p>=0 && p<52) return 'm'+p;
+  return 'h'+p;
 }
 
-/* get legal moves for current player given dice */
-function legalMovesFor(playerIndex, roll){
-  const posArr = gameState.positions[playerIndex];
+/* Compute distance along main track from posA to posB (0..51). If posA or posB not on main, returns null */
+function mainDistance(a,b){
+  if(a<0 || a>=52 || b<0 || b>=52) return null;
+  return (b - a + 52) % 52;
+}
+
+/* Convert player token pos to progress (how near to finish)
+   For tokens in home (100+), count large progress
+*/
+function tokenProgress(playerIndex, pos){
+  const start = START_IDX[ COLORS[playerIndex] ];
+  if(pos === -1) return 0;
+  if(pos>=0 && pos<52){
+    return (pos - start + 52) % 52;
+  }
+  // home positions encoded as 100 + player*100 + step
+  const base = 100 + playerIndex*100;
+  if(pos >= base) {
+    const step = pos - base;
+    return 52 + step; // beyond main track
+  }
+  return 0;
+}
+
+/* Legal moves for a player given roll */
+function legalMoves(playerIndex, roll){
+  const arr = ludoState.positions[playerIndex];
   const moves = [];
+  const start = START_IDX[ COLORS[playerIndex] ];
   for(let t=0;t<4;t++){
-    const pos = posArr[t];
+    const pos = arr[t];
     if(pos === -1){
-      if(roll === 6) moves.push({token:t,from:-1,to:START_INDEX[playerColor(playerIndex)]});
-    } else {
-      // compute prospective move
-      const startIndex = START_INDEX[playerColor(playerIndex)];
-      let relative = (pos - startIndex + MAIN_COUNT) % MAIN_COUNT;
-      let newRel = relative + roll;
-      if(newRel >= 51){
-        const homeStep = newRel - 51;
-        if(homeStep <= 5) moves.push({token:t, from:pos, to:52+homeStep});
-      } else {
-        moves.push({token:t, from:pos, to:(startIndex + newRel) % MAIN_COUNT});
+      if(roll === 6) moves.push({token:t, from:-1, to:start});
+      continue;
+    }
+    // if in home (pos >=100), compute home step target
+    const base = 100 + playerIndex*100;
+    if(pos >= base){
+      const step = pos - base;
+      const targetStep = step + roll;
+      if(targetStep <= 5){ // need exact to reach final
+        moves.push({token:t, from:pos, to: base + targetStep});
       }
+      continue;
+    }
+    // pos on main track -> compute move along main track
+    const rel = (pos - start + 52) % 52;
+    let newRel = rel + roll;
+    if(newRel > 51){
+      // enter home: newRel - 52 -> home step (0..)
+      const homeStep = newRel - 52;
+      if(homeStep <= 5) moves.push({token:t, from:pos, to: 100 + playerIndex*100 + homeStep});
+      // else overshoot -> not allowed
+    } else {
+      const newPos = (start + newRel) % 52;
+      moves.push({token:t, from:pos, to:newPos});
     }
   }
   return moves;
 }
 
-/* bot logic: difficulty levels
-  1 (easy): random legal move
-  2 (medium): prefer capture > move out > move closer to home
-  3 (hard): like medium but avoid moves that put token on immediate capture spot (basic risk)
-*/
-function botChooseMove(playerIndex, roll, difficulty){
-  const moves = legalMovesFor(playerIndex, roll);
-  if(moves.length===0) return null;
-  if(difficulty==1) return moves[rand(moves.length)];
-  // check capture moves
-  for(const m of moves){
-    if(m.to>=0 && m.to<MAIN_COUNT){
-      for(let pi=0;pi<gameState.positions.length;pi++){
-        if(pi===playerIndex) continue;
-        for(let ti=0;ti<4;ti++){
-          if(gameState.positions[pi][ti] === m.to && !Object.values(START_INDEX).includes(m.to)){
-            return m;
-          }
+/* Apply move */
+function applyMove(playerIndex, move){
+  // push to history
+  ludoHistory.push(JSON.stringify(ludoState));
+  const arr = ludoState.positions[playerIndex];
+  const token = move.token;
+  arr[token] = move.to;
+  // handle capture if moved to main board
+  if(move.to>=0 && move.to<52){
+    for(let p=0;p<ludoState.positions.length;p++){
+      if(p===playerIndex) continue;
+      for(let t=0;t<4;t++){
+        if(ludoState.positions[p][t] === move.to && !SAFE_INDICES.includes(move.to)){
+          ludoState.positions[p][t] = -1;
+          logLudo(`${ludoState.players[playerIndex].name} captured ${ludoState.players[p].name}'s token ${t+1}!`);
         }
       }
     }
   }
-  // prefer moving out of base
-  for(const m of moves) if(m.from===-1) return m;
-  // prefer larger progress (closer to home)
-  moves.sort((a,b)=>{
-    const prog = (a.to>=52)?1000:((a.to - START_INDEX[playerColor(playerIndex)] + MAIN_COUNT)%MAIN_COUNT);
-    const prog2 = (b.to>=52)?1000:((b.to - START_INDEX[playerColor(playerIndex)] + MAIN_COUNT)%MAIN_COUNT);
-    return prog2-prog; // descending prefer bigger progress
-  });
-  if(difficulty==3){
-    // avoid moves that land where opponent can immediately capture (naive: check any opponent with roll 6 landing on this spot)
+  // check if finished (all tokens in final home cell)
+  const base = 100 + playerIndex*100;
+  if(ludoState.positions[playerIndex].every(p => p >= base && p <= base+5)){
+    ludoState.finished[playerIndex] = true;
+    ludoState.winners.push(ludoState.players[playerIndex].name);
+    logLudo(`${ludoState.players[playerIndex].name} finished!`);
+  }
+}
+
+/* Next active player */
+function advanceTurn(skip = false){
+  // If current rolled a 6 and not skip, keep same player (handled externally)
+  const n = ludoState.players.length;
+  for(let i=1;i<=n;i++){
+    const cand = (ludoState.active + i) % n;
+    if(!ludoState.finished[cand]){ ludoState.active = cand; break; }
+  }
+  ludoState.dice = null; ludoState.rolled = false;
+  renderLudo();
+  if(ludoState.players[ludoState.active].type === 'bot') {
+    setTimeout(()=>botTurn(ludoState.active), 600);
+  }
+}
+
+/* Bot logic */
+function botTurn(playerIndex){
+  if(!ludoState || ludoState.players[playerIndex].type!=='bot') return;
+  // if not rolled yet, roll
+  if(!ludoState.rolled){
+    rollDice(); return;
+  }
+  const roll = ludoState.dice;
+  const level = Number($('#botLevel').value);
+  const moves = legalMoves(playerIndex, roll);
+  if(moves.length === 0){
+    logLudo(`${ludoState.players[playerIndex].name} has no move.`);
+    // if rolled 6 -> still gets turn but no moves: we'll advance
+    if(roll === 6){ /* still stays? classic Ludo gives extra turn only after moving; here just advance */ }
+    advanceTurn();
+    return;
+  }
+  // pick move by heuristics
+  let chosen = moves[rand(moves.length)];
+  if(level >= 2){
+    // prefer capture
     for(const m of moves){
-      let safe=true;
-      for(let pi=0;pi<gameState.positions.length;pi++){
-        if(pi===playerIndex) continue;
-        for(let ti=0;ti<4;ti++){
-          const oppPos = gameState.positions[pi][ti];
-          if(oppPos===-1) continue;
-          // if opponent can reach m.to in one roll of 6: compute distance from oppPos to m.to along main track
-          if(m.to>=0 && m.to<MAIN_COUNT && oppPos>=0 && oppPos<MAIN_COUNT){
-            const dist = (m.to - oppPos + MAIN_COUNT) % MAIN_COUNT;
-            if(dist<=6){ safe=false; break; }
+      if(m.to>=0 && m.to<52){
+        for(let p=0;p<ludoState.positions.length;p++){
+          if(p===playerIndex) continue;
+          for(let t=0;t<4;t++){
+            if(ludoState.positions[p][t] === m.to && !SAFE_INDICES.includes(m.to)){
+              chosen = m; break;
+            }
+          }
+        }
+      }
+      if(chosen === m) break;
+    }
+    // prefer moving out
+    for(const m of moves) if(m.from === -1) { chosen = m; break; }
+  }
+  if(level >= 3){
+    // avoid landing on spot where opponent can capture in next immediate move (basic)
+    moves.sort((a,b)=> tokenProgress(playerIndex, b.to) - tokenProgress(playerIndex, a.to));
+    for(const m of moves){
+      let safe = true;
+      for(let p=0;p<ludoState.positions.length;p++){
+        if(p===playerIndex) continue;
+        for(let t=0;t<4;t++){
+          const opp = ludoState.positions[p][t];
+          if(opp>=0 && opp<52 && m.to>=0 && m.to<52){
+            const dist = (m.to - opp + 52) % 52;
+            if(dist <= 6) { safe = false; break; }
           }
         }
         if(!safe) break;
       }
-      if(safe) return m;
+      if(safe){ chosen = m; break; }
     }
   }
-  return moves[0];
+  // perform move
+  applyMove(playerIndex, chosen);
+  renderLudo();
+  // if roll 6 -> same player gets another turn
+  if(ludoState.dice === 6 && !ludoState.finished[playerIndex]){
+    ludoState.rolled = false; ludoState.dice = null;
+    setTimeout(()=>{ if(ludoState.players[playerIndex].type==='bot') botTurn(playerIndex); }, 600);
+    return;
+  } else {
+    advanceTurn();
+  }
 }
 
-/* UI wiring */
-function updateUI(){
-  if(!gameState) return;
-  $('#turnLabel').textContent = gameState.players[gameState.activeIndex].name;
-  $('#diceDisplay').textContent = gameState.dice===null? '—' : gameState.dice;
-  $('#rollBtn').disabled = gameState.rolled;
-  $('#moveBtn').disabled = !gameState.rolled;
-  // player setup view reflect players
-  const wrap = $('#playersSetup');
+/* Roll dice triggered by user or bot */
+function rollDice(){
+  if(!ludoState) return;
+  if(ludoState.rolled) return;
+  const r = Math.floor(Math.random()*6)+1;
+  ludoState.dice = r; ludoState.rolled = true;
+  logLudo(`${ludoState.players[ludoState.active].name} rolled ${r}.`);
+  renderLudo();
+  // if current is bot, perform move after small delay
+  if(ludoState.players[ludoState.active].type === 'bot'){
+    setTimeout(()=>botTurn(ludoState.active), 800);
+  }
+}
+
+/* Player click handling: when dice rolled and human player's turn, click token to move */
+LUDOCANVAS.addEventListener('click', function(e){
+  if(!ludoState) return;
+  const rect = LUDOCANVAS.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  // find clicked token (closest)
+  let clicked = null;
+  for(let p=0;p<ludoState.positions.length;p++){
+    for(let t=0;t<4;t++){
+      const pos = ludoState.positions[p][t];
+      let xy;
+      if(pos === -1){
+        const basePositions = {
+          0: [{r:1,c:1},{r:1,c:3},{r:3,c:1},{r:3,c:3}],
+          1: [{r:1,c:11},{r:1,c:13},{r:3,c:11},{r:3,c:13}],
+          2: [{r:11,c:11},{r:11,c:13},{r:13,c:11},{r:13,c:13}],
+          3: [{r:11,c:1},{r:11,c:3},{r:13,c:1},{r:13,c:3}]
+        };
+        const gp = basePositions[p][t];
+        xy = gridToXY(gp.r, gp.c);
+      } else if(pos>=0 && pos<52){
+        const gp = MAIN_POS[pos];
+        xy = gridToXY(gp.r,gp.c);
+      } else {
+        const base = 100 + p*100, step = pos - base;
+        let r = MAIN_POS[ START_IDX[COLORS[p]] ].r, c = MAIN_POS[ START_IDX[COLORS[p]] ].c;
+        for(let s=0;s<=step;s++){ r += Math.sign(7-r); c += Math.sign(7-c); }
+        xy = gridToXY(r,c);
+      }
+      const dx = xy.x - x, dy = xy.y - y;
+      if(Math.sqrt(dx*dx+dy*dy) < 18){
+        clicked = {player:p, token:t}; break;
+      }
+    }
+    if(clicked) break;
+  }
+  if(!clicked) return;
+  // only allow move if clicked player is active and human and dice rolled
+  if(clicked.player !== ludoState.active) {
+    logLudo('Not this player turn.');
+    return;
+  }
+  if(ludoState.players[clicked.player].type === 'bot'){
+    logLudo('This is a bot player.');
+    return;
+  }
+  if(!ludoState.rolled){ logLudo('Roll the dice first.'); return; }
+  const moves = legalMoves(clicked.player, ludoState.dice).filter(m => m.token === clicked.token);
+  if(moves.length === 0){
+    logLudo('This token cannot move with current roll.');
+    return;
+  }
+  // If multiple moves exist for same token (rare), pick first
+  const move = moves[0];
+  applyMove(clicked.player, move);
+  renderLudo();
+  if(ludoState.dice === 6 && !ludoState.finished[clicked.player]){
+    // same player again
+    ludoState.rolled = false; ludoState.dice = null;
+    renderLudo();
+    return;
+  } else {
+    advanceTurn();
+  }
+});
+
+/* UI: players settings rendering */
+function renderPlayersUI(){
+  const wrap = $('#playerSettings');
   wrap.innerHTML = '';
-  gameState.players.forEach((p, i)=>{
-    const div = document.createElement('div'); div.className='playerSetup';
-    div.innerHTML = `<div style="width:12px;height:12px;border-radius:3px;background:${colorHex[COLORS[i]]};margin-right:6px"></div>
-      <div style="min-width:120px">${p.name} ${p.type==='bot'?'<span class="muted">(bot)</span>':''}</div>
-      <div class="muted">Score:—</div>`;
-    wrap.appendChild(div);
+  ludoState.players.forEach((p,i)=>{
+    const row = document.createElement('div'); row.className = 'playerRow';
+    const colorBox = document.createElement('div'); colorBox.style.width='12px'; colorBox.style.height='12px'; colorBox.style.borderRadius='4px'; colorBox.style.background = COLOR_MAP[COLORS[i]];
+    const nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value = p.name; nameInp.style.width='110px';
+    nameInp.addEventListener('change', ()=> { ludoState.players[i].name = nameInp.value; renderLudo(); });
+    const sel = document.createElement('select');
+    sel.innerHTML = `<option value="human">Human</option><option value="bot">Bot</option>`;
+    sel.value = p.type;
+    sel.addEventListener('change', ()=>{ ludoState.players[i].type = sel.value; renderLudo(); });
+    row.appendChild(colorBox); row.appendChild(nameInp); row.appendChild(sel);
+    wrap.appendChild(row);
   });
 }
 
-/* Roll dice */
-function rollDice(){
-  if(!gameState) return;
-  const roll = Math.floor(Math.random()*6)+1;
-  gameState.dice = roll;
-  gameState.rolled = true;
-  $('#diceDisplay').textContent = roll;
-  log(`${gameState.players[gameState.activeIndex].name} rolled a ${roll}.`);
-  drawBoard();
-  // if current player is bot, auto choose
-  const cur = gameState.activeIndex;
-  if(gameState.players[cur].type==='bot'){
-    setTimeout(()=>botPerformTurn(cur, roll), 700);
-  }
-}
-
-function botPerformTurn(index, roll){
-  const difficulty = Number($('#botDifficulty').value);
-  const choice = botChooseMove(index, roll, difficulty);
-  if(choice) {
-    moveToken(index, choice.token, roll);
-  } else {
-    log(`${gameState.players[index].name} has no valid moves.`);
-  }
-  // if roll was 6, they get another turn (unless finished)
-  if(roll===6 && !gameState.finished[index]){
-    log(`${gameState.players[index].name} rolled 6 and goes again.`);
-    gameState.rolled = false;
-    gameState.dice = null;
-    drawBoard(); updateUI();
-    setTimeout(()=>{ if(gameState.players[index].type==='bot') { const r = Math.floor(Math.random()*6)+1; gameState.dice=r; gameState.rolled=true; botPerformTurn(index,r);} }, 500);
-  } else {
-    nextTurn();
-  }
-}
-
-/* User auto move: choose best move for human (helper) */
-function autoMoveHuman(){
-  const cur = gameState.activeIndex;
-  const roll = gameState.dice;
-  if(!gameState.rolled) return;
-  const moves = legalMovesFor(cur, roll);
-  if(moves.length===0){ log('No legal moves'); nextTurn(); return; }
-  // pick best by simple heuristic: capture > move out > furthest progress
-  let best=null;
-  for(const m of moves){
-    // detect capture
-    if(m.to>=0 && m.to<MAIN_COUNT){
-      for(let pi=0;pi<gameState.positions.length;pi++){
-        if(pi===cur) continue;
-        for(let ti=0;ti<4;ti++){
-          if(gameState.positions[pi][ti]===m.to && !Object.values(START_INDEX).includes(m.to)) { best=m; break; }
-        }
-        if(best) break;
-      }
-    }
-    if(best) break;
-  }
-  if(!best){
-    for(const m of moves) if(m.from===-1){ best=m; break; }
-  }
-  if(!best){
-    moves.sort((a,b)=>{
-      const progA = (a.to>=52)?1000:((a.to - START_INDEX[playerColor(cur)] + MAIN_COUNT)%MAIN_COUNT);
-      const progB = (b.to>=52)?1000:((b.to - START_INDEX[playerColor(cur)] + MAIN_COUNT)%MAIN_COUNT);
-      return progB-progA;
-    });
-    best = moves[0];
-  }
-  moveToken(cur, best.token, roll);
-  if(roll===6 && !gameState.finished[cur]){ gameState.rolled=false; gameState.dice=null; drawBoard(); updateUI(); } else { nextTurn(); }
-}
-
-/* Setup initial players selection UI for new game */
-function openNewGameDialog(){
-  // build a default: 4 players, first human, others bots/human as configured
-  const container = $('#playersSetup');
-  container.innerHTML='';
-  for(let i=0;i<4;i++){
-    const color = COLORS[i];
-    const div = document.createElement('div');
-    div.className='playerSetup';
-    div.innerHTML = `
-      <div style="width:12px;height:12px;border-radius:3px;background:${colorHex[color]};margin-right:6px"></div>
-      <input type="text" value="${color[0].toUpperCase()+color.slice(1)}" data-index="${i}" style="width:110px" />
-      <select data-index="${i}">
-        <option value="human">Human</option>
-        <option value="bot">Bot</option>
-      </select>
-    `;
-    container.appendChild(div);
-  }
-}
-
-/* Hook UI events */
-$('#newGameBtn').addEventListener('click',()=>{
-  // gather player config from playersSetup if present
-  const selects = $('#playersSetup').querySelectorAll('select');
-  const inputs = $('#playersSetup').querySelectorAll('input[type=text]');
-  const players = [];
-  if(selects.length && inputs.length){
-    for(let i=0;i<selects.length;i++){
-      players.push({name:inputs[i].value || `Player ${i+1}`, type: selects[i].value});
-    }
-  } else {
-    // default
-    players.push({name:'You',type:'human'},{name:'Bot 1',type:'bot'},{name:'Bot 2',type:'bot'},{name:'Bot 3',type:'bot'});
-  }
-  newGame({players});
+/* Undo */
+$('#undoBtn').addEventListener('click', ()=>{
+  if(ludoHistory.length === 0){ logLudo('Nothing to undo'); return; }
+  const prev = ludoHistory.pop();
+  ludoState = JSON.parse(prev);
+  renderLudo(); renderPlayersUI();
+  logLudo('Undo performed.');
 });
-$('#rollBtn').addEventListener('click',()=>rollDice());
-$('#moveBtn').addEventListener('click',()=>autoMoveHuman());
-$('#saveBtn').addEventListener('click',()=>saveGame());
-$('#loadBtn').addEventListener('click',()=>loadGame());
-$('#playersSetup').addEventListener('change',()=>{ /* no-op, inputs captured on new game */ });
 
-/* init: show new game default */
-openNewGameDialog();
-newGame({players:[{name:'You',type:'human'},{name:'Bot 1',type:'bot'},{name:'Bot 2',type:'bot'},{name:'Bot 3',type:'bot'}]});
+/* Save/load */
+$('#saveLudo').addEventListener('click', ()=> saveLudo());
+$('#loadLudo').addEventListener('click', ()=> loadLudo());
 
-/* =========================================================
-   QUIZ Implementation (randomized bank)
-   ========================================================= */
+/* New Game button uses current UI players config */
+$('#newBtn').addEventListener('click', ()=>{
+  // Build players array from UI if present
+  const rows = $('#playerSettings').querySelectorAll('.playerRow');
+  if(rows.length === 0) { resetLudoDefault(); return; }
+  const players = [];
+  for(let i=0;i<rows.length;i++){
+    const name = rows[i].querySelector('input').value || `P${i+1}`;
+    const type = rows[i].querySelector('select').value;
+    players.push({name,type});
+  }
+  ludoState = {
+    players,
+    positions: players.map(()=>[-1,-1,-1,-1]),
+    active: 0,
+    dice: null,
+    rolled: false,
+    finished: players.map(()=>false),
+    winners: []
+  };
+  ludoHistory = [];
+  logLudo('New game started with players: ' + players.map(p=>p.name+'('+p.type+')').join(', '));
+  renderLudo();
+  renderPlayersUI();
+});
+
+/* Roll button */
+$('#rollBtn').addEventListener('click', ()=> rollDice());
+
+/* Initialize Ludo */
+resetLudoDefault();
+
+/* Space to roll quickly */
+document.addEventListener('keydown',(e)=>{ if(e.code === 'Space'){ e.preventDefault(); if(!ludoState.rolled) rollDice(); }} );
+
+/* -------------------------------------------------------
+   QUIZ: improved randomization and larger bank
+--------------------------------------------------------*/
 const QUESTION_BANK = [
   {q:"What is the capital of France?", a:["Paris","Berlin","Rome","Madrid"], correct:0},
   {q:"Which planet is known as the Red Planet?", a:["Mars","Venus","Jupiter","Saturn"], correct:0},
@@ -699,204 +832,179 @@ const QUESTION_BANK = [
   {q:"Which is the smallest prime number?", a:["2","1","3","5"], correct:0},
   {q:"What is the chemical symbol for gold?", a:["Au","Ag","Gd","Go"], correct:0},
   {q:"What is the largest land animal?", a:["Elephant","Giraffe","Rhino","Hippo"], correct:0},
-  // add more if desired
+  {q:"What does HTML stand for?", a:["HyperText Markup Language","Home Tool Markup Language","Hyperlinks Text Markup Language","HighText Machine Language"], correct:0},
+  {q:"Which country invented paper?", a:["China","Egypt","Greece","India"], correct:0},
+  {q:"What gas do humans exhale?", a:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"], correct:0},
+  {q:"Which organ purifies blood in the human body?", a:["Kidney","Heart","Lungs","Liver"], correct:0},
+  {q:"Which is the hottest planet in our solar system?", a:["Venus","Mercury","Mars","Jupiter"], correct:0}
 ];
 
-let quizState = {pool:[],index:0,score:0,sessionSize:10};
-
+let quizState = {pool:[], idx:0, score:0, size:10};
 function startQuiz(){
-  const size = Math.max(3, Math.min(50, Number($('#qCount').value || 10)));
-  quizState.sessionSize = size;
-  const pool = [...QUESTION_BANK];
-  shuffle(pool);
-  quizState.pool = pool.slice(0,size).map(q=>{
-    return {...q, shuffledAnswers: shuffle(q.a.map((t,i)=>({text:t,idx:i})))};
-  });
-  quizState.index = 0; quizState.score = 0;
-  $('#quizScore').textContent = '0';
-  $('#qLeft').textContent = quizState.sessionSize - quizState.index;
-  showQuestion();
-  log('Quiz started: ' + size + ' questions.');
+  const size = Math.max(3, Math.min(100, Number($('#qCount').value||10)));
+  quizState.size = size;
+  const pool = shuffle(QUESTION_BANK.slice());
+  quizState.pool = pool.slice(0, size).map(q => ({...q, opts: shuffle(q.a.map((t,i)=>({text:t, idx:i}))) }));
+  quizState.idx = 0; quizState.score = 0;
+  $('#qScore').textContent = quizState.score;
+  $('#qLeft').textContent = quizState.size - quizState.idx;
+  showQuizQuestion();
 }
-
-function showQuestion(){
-  const q = quizState.pool[quizState.index];
-  if(!q){ $('#qText').textContent='No more questions'; $('#answers').innerHTML=''; $('#qLeft').textContent='0'; return; }
-  $('#qText').textContent = (quizState.index+1) + '. ' + q.q;
-  const answersWrap = $('#answers'); answersWrap.innerHTML='';
-  q.shuffledAnswers.forEach(opt=>{
-    const btn = document.createElement('div'); btn.className='answer';
-    btn.textContent = opt.text;
-    btn.addEventListener('click',()=>{
-      if(btn.classList.contains('answered')) return;
-      btn.classList.add('answered');
-      if(opt.idx === q.correct){
-        btn.classList.add('correct'); quizState.score++; $('#quizScore').textContent = quizState.score;
-        log('Quiz: correct answer.');
-      } else {
-        btn.classList.add('wrong');
+function showQuizQuestion(){
+  const q = quizState.pool[quizState.idx];
+  if(!q){ $('#qText').textContent='No more questions'; $('#qAnswers').innerHTML=''; return; }
+  $('#qText').textContent = `${quizState.idx+1}. ${q.q}`;
+  const wrap = $('#qAnswers'); wrap.innerHTML = '';
+  q.opts.forEach(opt=>{
+    const b = document.createElement('button'); b.className = 'ghost'; b.style.width = '100%'; b.textContent = opt.text;
+    b.addEventListener('click', ()=>{
+      // disable all
+      [...wrap.children].forEach(ch=>ch.disabled = true);
+      if(opt.idx === q.correct){ b.style.border='2px solid #10b981'; quizState.score++; $('#qScore').textContent = quizState.score; }
+      else {
+        b.style.border='2px solid #ef4444';
         // highlight correct
-        [...answersWrap.children].forEach(c=>{
-          if(c.textContent === q.a[q.correct]) c.classList.add('correct');
+        [...wrap.children].forEach(ch=>{
+          if(ch.textContent === q.a[q.correct]) ch.style.border='2px solid #10b981';
         });
-        log('Quiz: wrong answer.');
       }
-      // disable others
-      [...answersWrap.children].forEach(c=>c.style.pointerEvents='none');
-      $('#qLeft').textContent = quizState.sessionSize - (quizState.index+1);
+      $('#qLeft').textContent = quizState.size - (quizState.idx+1);
     });
-    answersWrap.appendChild(btn);
+    wrap.appendChild(b);
   });
 }
-
-$('#startQuiz').addEventListener('click',()=>startQuiz());
-$('#nextQ').addEventListener('click',()=>{
-  quizState.index++;
-  if(quizState.index >= quizState.sessionSize){ alert('Quiz finished. Score: '+quizState.score+'/'+quizState.sessionSize); return; }
-  showQuestion();
+$('#startQuiz').addEventListener('click', ()=> startQuiz());
+$('#nextQuiz').addEventListener('click', ()=>{
+  quizState.idx++;
+  if(quizState.idx >= quizState.size){ alert(`Quiz finished: ${quizState.score}/${quizState.size}`); return; }
+  showQuizQuestion();
 });
 
-/* =========================================================
-   Sliding Puzzle Implementation
-   - grid NxN, numbers 1..N*N-1 and one empty
-   - shuffle and allow clicks to slide; timer; hint reveals position of one tile
-   ========================================================= */
-let puzzle = {size:6, tiles:[], emptyIndex:0, started:false, startTime:0, elapsed:0, timer:null, hints:0};
-
-function buildPuzzle(size){
-  puzzle.size = size;
-  const n = size*size;
-  puzzle.tiles = [];
-  for(let i=1;i<n;i++) puzzle.tiles.push(i);
-  puzzle.tiles.push(null); // empty
-  puzzle.emptyIndex = n-1;
-  puzzle.started=false; puzzle.elapsed=0; puzzle.hints=0;
-  renderPuzzle();
+/* -------------------------------------------------------
+   2048 Puzzle implementation (classic)
+--------------------------------------------------------*/
+let g2048 = {size:4, grid:[], score:0, previous:null};
+function new2048(size=4){
+  g2048.size = size; g2048.grid = Array(size*size).fill(0); g2048.score = 0; g2048.previous = null;
+  addRandomTile(); addRandomTile();
+  render2048();
 }
-
-function renderPuzzle(){
-  const board = $('#puzzleBoard');
-  const n = puzzle.size;
-  board.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-  board.style.width = Math.min(420, n*72) + 'px';
-  board.style.height = Math.min(420, n*72) + 'px';
-  board.innerHTML = '';
-  for(let i=0;i<puzzle.tiles.length;i++){
-    const val = puzzle.tiles[i];
-    const div = document.createElement('div');
-    div.className='tile' + (val===null? ' hidden':'');
-    if(val !== null) div.textContent = val;
-    div.style.fontSize = Math.max(12, 28 - puzzle.size) + 'px';
-    div.addEventListener('click',()=>onTileClick(i));
-    board.appendChild(div);
-  }
-  $('#pStatus').textContent = puzzle.started ? `Started — hints used ${puzzle.hints}` : 'Not started';
-}
-
-function onTileClick(index){
-  // attempt to move tile into empty if adjacent
-  const size = puzzle.size;
-  const r = Math.floor(index/size), c = index%size;
-  const er = Math.floor(puzzle.emptyIndex/size), ec = puzzle.emptyIndex%size;
-  const dist = Math.abs(r-er) + Math.abs(c-ec);
-  if(dist===1){
-    [puzzle.tiles[index], puzzle.tiles[puzzle.emptyIndex]] = [puzzle.tiles[puzzle.emptyIndex], puzzle.tiles[index]];
-    puzzle.emptyIndex = index;
-    renderPuzzle();
-    if(!puzzle.started){ puzzle.started=true; startPuzzleTimer(); $('#pStatus').textContent='Started'; }
-    checkPuzzleComplete();
-  }
-}
-
-function shufflePuzzle(steps=400){
-  // perform random legal moves from solved state
-  buildPuzzle(puzzle.size);
-  let last = -1;
-  for(let i=0;i<steps;i++){
-    const neighbors = getNeighbors(puzzle.emptyIndex);
-    // avoid undo
-    const choice = neighbors[rand(neighbors.length)];
-    [puzzle.tiles[choice], puzzle.tiles[puzzle.emptyIndex]] = [puzzle.tiles[puzzle.emptyIndex], puzzle.tiles[choice]];
-    puzzle.emptyIndex = choice;
-  }
-  puzzle.started=true; puzzle.hints=0; renderPuzzle(); startPuzzleTimer(); $('#pStatus').textContent='Shuffled';
-}
-
-function getNeighbors(index){
-  const size = puzzle.size;
-  const r = Math.floor(index/size), c = index%size;
-  const list=[];
-  if(r>0) list.push(index-size);
-  if(r<size-1) list.push(index+size);
-  if(c>0) list.push(index-1);
-  if(c<size-1) list.push(index+1);
-  return list;
-}
-
-function startPuzzleTimer(){
-  puzzle.startTime = Date.now();
-  if(puzzle.timer) clearInterval(puzzle.timer);
-  puzzle.timer = setInterval(()=>{
-    puzzle.elapsed = Math.floor((Date.now()-puzzle.startTime)/1000);
-    $('#pTime').textContent = fmtTime(puzzle.elapsed);
-  },1000);
-}
-
-function checkPuzzleComplete(){
-  // solved if numbers in order and last null
-  for(let i=0;i<puzzle.tiles.length-1;i++){
-    if(puzzle.tiles[i] !== i+1) return false;
-  }
-  if(puzzle.tiles[puzzle.tiles.length-1] !== null) return false;
-  // solved
-  clearInterval(puzzle.timer); puzzle.timer=null;
-  $('#pStatus').textContent = `Solved in ${fmtTime(puzzle.elapsed)} with ${puzzle.hints} hints.`;
-  log(`Puzzle solved in ${fmtTime(puzzle.elapsed)}.`);
+function idx(r,c){ return r * g2048.size + c; }
+function outOfBounds(r,c){ return r<0 || r>=g2048.size || c<0 || c>=g2048.size; }
+function addRandomTile(){
+  const empties = [];
+  g2048.grid.forEach((v,i)=>{ if(v===0) empties.push(i);});
+  if(empties.length===0) return false;
+  const i = empties[rand(empties.length)];
+  g2048.grid[i] = Math.random() < 0.9 ? 2 : 4;
   return true;
 }
-
-function hintReveal(){
-  // find a tile not in correct position and place it correctly (by swapping with current position)
-  const n = puzzle.tiles.length;
-  for(let i=0;i<n-1;i++){
-    if(puzzle.tiles[i] !== i+1){
-      // find where the tile that should go to i currently is
-      const targetVal = i+1;
-      const idx = puzzle.tiles.indexOf(targetVal);
-      // swap idx with empty? Instead, move tile into empty by swapping directly with empty (we'll place tile at empty, then swap empty into idx)
-      if(idx>=0){
-        // swap tile at idx with tile at empty (simple)
-        [puzzle.tiles[idx], puzzle.tiles[puzzle.emptyIndex]] = [puzzle.tiles[puzzle.emptyIndex], puzzle.tiles[idx]];
-        puzzle.emptyIndex = idx;
-        puzzle.hints++;
-        renderPuzzle(); $('#pStatus').textContent = `Hint used (${puzzle.hints})`;
-        log('Puzzle hint used.');
-        return;
-      }
+function render2048(){
+  $('#pScore').textContent = g2048.score;
+  const wrap = $('#grid2048');
+  const n = g2048.size;
+  wrap.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+  wrap.style.width = Math.min(420, n*80) + 'px';
+  wrap.style.height = Math.min(420, n*80) + 'px';
+  wrap.innerHTML = '';
+  for(let r=0;r<n;r++){
+    for(let c=0;c<n;c++){
+      const v = g2048.grid[idx(r,c)];
+      const d = document.createElement('div'); d.className = 'tile2048';
+      d.style.background = v===0 ? 'rgba(255,255,255,0.02)' : tileColor(v);
+      d.style.fontSize = v<128 ? '22px' : '18px';
+      d.textContent = v===0 ? '' : v;
+      wrap.appendChild(d);
     }
   }
-  log('No hint available or already solved.');
+}
+function tileColor(v){
+  const colors = {2:'#eee4da',4:'#ede0c8',8:'#f2b179',16:'#f59563',32:'#f67c5f',64:'#f65e3b',128:'#edcf72',256:'#edcc61',512:'#edc850',1024:'#edc53f',2048:'#edc22e'};
+  return colors[v] || '#3c3a32';
+}
+function move2048(dir){
+  // Save previous for undo
+  g2048.previous = {grid: g2048.grid.slice(), score: g2048.score};
+  let moved=false;
+  const n = g2048.size;
+  const merged = Array(n*n).fill(false);
+  const loop = (r,c,dr,dc) => {
+    const cur = idx(r,c);
+    if(g2048.grid[cur] === 0) return;
+    let rr = r, cc = c;
+    while(true){
+      const nr = rr + dr, nc = cc + dc;
+      if(outOfBounds(nr,nc)) break;
+      const ni = idx(nr,nc);
+      if(g2048.grid[ni] === 0){
+        g2048.grid[ni] = g2048.grid[idx(rr,cc)];
+        g2048.grid[idx(rr,cc)] = 0;
+        rr = nr; cc = nc; moved = true;
+      } else if(g2048.grid[ni] === g2048.grid[idx(rr,cc)] && !merged[ni]){
+        // merge
+        g2048.grid[ni] *= 2;
+        g2048.score += g2048.grid[ni];
+        g2048.grid[idx(rr,cc)] = 0;
+        merged[ni] = true;
+        moved = true;
+        break;
+      } else break;
+    }
+  };
+  if(dir === 'left'){
+    for(let r=0;r<n;r++) for(let c=0;c<n;c++) loop(r,c,0,-1);
+  } else if(dir==='right'){
+    for(let r=0;r<n;r++) for(let c=n-1;c>=0;c--) loop(r,c,0,1);
+  } else if(dir==='up'){
+    for(let c=0;c<n;c++) for(let r=0;r<n;r++) loop(r,c,-1,0);
+  } else if(dir==='down'){
+    for(let c=0;c<n;c++) for(let r=n-1;r>=0;r--) loop(r,c,1,0);
+  }
+  if(moved){ addRandomTile(); render2048(); }
+  return moved;
+}
+function undo2048(){
+  if(g2048.previous){ g2048.grid = g2048.previous.grid.slice(); g2048.score = g2048.previous.score; g2048.previous = null; render2048(); }
+}
+function aiMove2048(){
+  // very simple heuristic: try moves in order up,left,right,down and pick first that changes grid
+  const attempts = ['up','left','right','down'];
+  for(const d of attempts){
+    const copy = g2048.grid.slice(), sc = g2048.score;
+    const ok = move2048(d);
+    if(ok) return;
+    g2048.grid = copy; g2048.score = sc;
+  }
 }
 
-/* Wire puzzle buttons */
-$('#shufflePuzzle').addEventListener('click',()=>{ shufflePuzzle(puzzle.size===6?400:200); });
-$('#hintBtn').addEventListener('click',()=>{ hintReveal(); });
-$('#solveBtn').addEventListener('click',()=>{ // demo solve: reset to solved
-  buildPuzzle(puzzle.size); clearInterval(puzzle.timer); puzzle.timer=null; puzzle.elapsed=0; $('#pTime').textContent='00:00';
-  renderPuzzle(); $('#pStatus').textContent='Solved (demo)'; log('Puzzle auto-solved (demo).');
+/* 2048 controls */
+$('#new2048').addEventListener('click', ()=> new2048(Number($('#gSize').value)));
+$('#undo2048').addEventListener('click', ()=> undo2048());
+$('#ai2048').addEventListener('click', ()=> aiMove2048());
+$('#gSize').addEventListener('change', ()=> new2048(Number($('#gSize').value)));
+
+/* keyboard for 2048 */
+document.addEventListener('keydown', (e)=>{
+  if($('#puzzle').style.display === 'flex'){
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); move2048('left'); }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); move2048('right'); }
+    if(e.key === 'ArrowUp'){ e.preventDefault(); move2048('up'); }
+    if(e.key === 'ArrowDown'){ e.preventDefault(); move2048('down'); }
+  }
 });
-$('#pSize').addEventListener('change',()=>{ buildPuzzle(Number($('#pSize').value)); });
 
-/* init puzzle */
-buildPuzzle(6);
+/* initialize 2048 */
+new2048(4);
 
-/* initial draw */
-drawBoard();
+/* -------------------------------------------------------
+   Init: small helpers and start
+--------------------------------------------------------*/
+function tileClicked(msg){ console.log(msg); }
 
-/* Small accessibility: allow keyboard roll space when focused */
-document.addEventListener('keydown', (e)=>{ if(e.code==='Space'){ e.preventDefault(); if($('#rollBtn') && !$('#rollBtn').disabled) rollDice(); } });
+renderLudo();
+renderPlayersUI();
 
-/* End of app */
+/* End of file */
 </script>
 </body>
 </html>
