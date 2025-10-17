@@ -3,9 +3,103 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Friends Chat — Play with Bot or Friends</title>
+  <title>Friends Chat — Bot & Friends (Single File)</title>
+  <!-- Google font (optional) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    :root{
+      --bg:#061025;
+      --panel: rgba(255,255,255,0.03);
+      --accent1:#6ee7b7;
+      --accent2:#60a5fa;
+      --muted:#9ca3af;
+      --glass: rgba(255,255,255,0.02);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg,#061025 0%, #07111a 100%);
+      color:#e6eef8;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    /* Layout */
+    .shell{
+      width:min(1100px,98vw); height:78vh; display:flex; border-radius:14px; overflow:hidden; box-shadow:0 20px 60px rgba(2,6,23,0.6);
+    }
+    .left{
+      width:320px; padding:18px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-right:1px solid rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:14px;
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2)); color:#042022; font-weight:800; font-size:20px;
+    }
+    .left h1{margin:0; font-size:18px}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+
+    .controls input{
+      width:100%; padding:10px 12px; margin-top:8px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
+      background:transparent; color:inherit; outline:none;
+    }
+    .modeRow{display:flex; gap:10px; align-items:center; margin-top:8px}
+    .modeRow label{font-size:13px; color:var(--muted)}
+    .primary{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#042022; border:none; padding:10px 12px;
+      border-radius:10px; cursor:pointer; font-weight:700; width:100%; margin-top:8px;
+    }
+    .ghost{background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit; padding:8px 10px; border-radius:10px; cursor:pointer}
+
+    .onlineWrap{flex:1; overflow:auto}
+    .usersList{list-style:none; margin:8px 0 0 0; padding:0; display:flex; flex-direction:column; gap:8px}
+    .usersList li{
+      display:flex; gap:10px; align-items:center; padding:8px; border-radius:10px; transition:transform .08s, background .08s;
+    }
+    .userAvatar{
+      width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#042022;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    }
+    .leftFooter{padding-top:6px; border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* Right / chat */
+    .right{flex:1; display:flex; flex-direction:column; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));}
+    .chatHeader{display:flex; justify-content:space-between; align-items:center; padding:14px; border-bottom:1px solid rgba(255,255,255,0.02)}
+    .messages{flex:1; padding:18px; overflow:auto; display:flex; flex-direction:column; gap:12px}
+    .messages.empty{align-items:center; justify-content:center}
+    .hint{color:var(--muted); text-align:center; max-width:70%}
+
+    /* message */
+    .msg{max-width:72%; display:flex; flex-direction:column; gap:6px}
+    .msg.me{margin-left:auto; align-items:flex-end}
+    .meta{font-size:12px; color:var(--muted)}
+    .bubble{
+      padding:12px 14px; border-radius:12px; background:var(--panel); border:1px solid rgba(255,255,255,0.03);
+    }
+    .msg.me .bubble{background:linear-gradient(90deg, rgba(110,231,183,0.12), rgba(96,165,250,0.1)); border-color:rgba(96,165,250,0.12)}
+    .typing{font-size:13px; color:var(--muted); display:flex; gap:6px; align-items:center}
+
+    /* form */
+    .msgForm{display:flex; gap:10px; padding:12px; border-top:1px solid rgba(255,255,255,0.02)}
+    .msgForm input{flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:inherit; outline:none}
+    .msgForm button{padding:10px 14px; border-radius:10px; border:none; background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#042022; font-weight:700; cursor:pointer}
+
+    /* small helpers */
+    .hidden{display:none}
+    @media(max-width:880px){
+      .shell{flex-direction:column; height:92vh}
+      .left{width:100%; flex-direction:row; gap:8px; padding:10px; align-items:center}
+      .onlineWrap{display:none}
+      .right{width:100%}
+      .usersList{display:flex; gap:8px; overflow:auto}
+      .usersList li{min-width:130px; flex-direction:column; align-items:flex-start}
+    }
+  </style>
 </head>
 <body>
   <div class="shell">
@@ -34,7 +128,7 @@
       </div>
 
       <div class="leftFooter muted small">
-        Local Bot available instantly. Friends use a small WebSocket server (optional).
+        Local Bot works instantly. Friends mode uses a simple WebSocket server (optional).
       </div>
     </aside>
 
@@ -51,7 +145,7 @@
       </header>
 
       <div id="messages" class="messages empty">
-        <div class="hint">Start by joining — choose Bot to chat immediately, or Friends to connect peers.</div>
+        <div class="hint">Start by entering your name and click Start. Bot mode works immediately. Friends mode requires a WebSocket server.</div>
       </div>
 
       <form id="msgForm" class="msgForm hidden" autocomplete="off">
@@ -61,6 +155,281 @@
     </main>
   </div>
 
-  <script src="assets/js/main.js"></script>
+  <script>
+    /*****************************************************************
+     * Single-file chat app
+     * - Bot mode: runs entirely in the browser (no server).
+     * - Friends mode: uses a WebSocket server (optional).
+     *
+     * To use Friends mode:
+     * 1) Deploy a small websocket server (server.js from earlier messages) to a host that supports wss.
+     * 2) Replace WS_URL below with your server address (wss://... or ws://localhost:8080 for local testing).
+     *****************************************************************/
+    const WS_URL = 'wss://REPLACE_WITH_YOUR_SERVER_URL'; // <-- set this if you deploy a server
+
+    // DOM
+    const nameInput = document.getElementById('nameInput');
+    const joinBtn = document.getElementById('joinBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const usersListEl = document.getElementById('usersList');
+    const chatTitle = document.getElementById('chatTitle');
+    const subTitle = document.getElementById('subTitle');
+    const messagesEl = document.getElementById('messages');
+    const msgForm = document.getElementById('msgForm');
+    const msgInput = document.getElementById('msgInput');
+    const quizBtn = document.getElementById('quizBtn');
+    const leaveBtn = document.getElementById('leaveBtn');
+
+    let me = { uid: null, name: null };
+    let mode = 'bot'; // 'bot' or 'friends'
+    let ws = null;
+    let onlineList = [];
+    let currentChat = null;
+    let botState = { quizActive: false, currentQuestion: null, score: 0 };
+
+    function uidGen(){ return 'u' + Math.random().toString(36).slice(2,9); }
+    function uidShort(u){ return u ? u.slice(0,6) : '' }
+    function initials(name){ const p=(name||'').trim().split(/\s+/); return p.length>1? (p[0][0]+p[1][0]).toUpperCase() : (p[0]||'').slice(0,2).toUpperCase(); }
+    function roomId(a,b){ return a < b ? `${a}_${b}` : `${b}_${a}`; }
+
+    // UI helpers
+    function showStatus(t){ statusMsg.textContent = t || ''; }
+    function clearMessages(){ messagesEl.innerHTML=''; messagesEl.classList.add('empty'); }
+    function appendMessage({ fromName, fromUid, text, ts }, mine=false){
+      messagesEl.classList.remove('empty');
+      const el = document.createElement('div'); el.className = 'msg ' + (mine? 'me':'other');
+      const meta = document.createElement('div'); meta.className = 'meta';
+      meta.textContent = `${fromName} • ${new Date(ts||Date.now()).toLocaleTimeString()}`;
+      const bubble = document.createElement('div'); bubble.className = 'bubble';
+      bubble.textContent = text;
+      el.appendChild(meta); el.appendChild(bubble);
+      messagesEl.appendChild(el);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+    function addSystem(text){ messagesEl.classList.remove('empty'); const el=document.createElement('div'); el.className='msg'; const b=document.createElement('div'); b.className='bubble'; b.style.background='transparent'; b.style.border='1px dashed rgba(255,255,255,0.04)'; b.textContent=text; el.appendChild(b); messagesEl.appendChild(el); messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+    // mode radio
+    document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', (e)=>{ mode = e.target.value; }));
+
+    // join flow
+    joinBtn.addEventListener('click', () => {
+      const name = (nameInput.value || '').trim();
+      if(!name){ showStatus('Please enter a name'); return; }
+      me.name = name;
+      me.uid = uidGen();
+      if(mode === 'bot'){
+        startBotMode();
+      } else {
+        startFriendsMode();
+      }
+    });
+
+    leaveBtn.addEventListener('click', () => {
+      if(mode === 'friends'){ disconnectWs(); }
+      resetUI();
+    });
+
+    /* ------------------- Bot mode ------------------- */
+    function startBotMode(){
+      clearMessages();
+      chatTitle.textContent = `Chatting with Bot`;
+      subTitle.textContent = `You: ${me.name}`;
+      showStatus('Bot mode — no server required');
+      msgForm.classList.remove('hidden');
+      leaveBtn.classList.remove('hidden');
+      quizBtn.classList.remove('hidden');
+      onlineList = [{ uid: me.uid, name: me.name }];
+      renderPresence();
+      addSystem(`You're now chatting with the Bot. Try /help for commands.`);
+      setTimeout(()=>botReply(`Hi ${me.name}! I'm your friendly bot. Ask me anything or click "Play Quiz".`), 700);
+    }
+
+    function botReply(text, delay=700){
+      const typ = document.createElement('div'); typ.className='typing muted'; typ.id='typingIndicator'; typ.textContent='Bot is typing';
+      const dots = document.createElement('span'); dots.textContent=' . . .'; typ.appendChild(dots);
+      messagesEl.appendChild(typ);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      setTimeout(()=> {
+        const t = document.getElementById('typingIndicator'); if(t) t.remove();
+        appendMessage({ fromName: 'Bot', fromUid: 'bot', text, ts: Date.now() }, false);
+      }, delay);
+    }
+
+    function handleBotInput(text){
+      if(text.startsWith('/')){
+        const cmd = text.slice(1).trim().toLowerCase();
+        if(cmd === 'help') botReply('Commands: /help, /time, /about, /quiz - or click Play Quiz button.');
+        else if(cmd === 'time') botReply(`Current time: ${new Date().toLocaleString()}`);
+        else if(cmd === 'about') botReply('I am a simple local bot. I can chat, answer a few commands, and run a short quiz.');
+        else if(cmd === 'quiz') startQuiz();
+        else botReply("Unknown command. Try /help");
+        return;
+      }
+      const lc = text.toLowerCase();
+      if(/how are you|how's it going/.test(lc)) botReply("I'm just code, but thanks for asking — I'm ready to chat!");
+      else if(/hi|hello|hey\b/.test(lc)) botReply(`Hello ${me.name}!`);
+      else if(/weather|temperature/.test(lc)) botReply("I can't read the weather, but you can imagine a bright sunny day!");
+      else if(/\b(bye|goodbye|see ya)\b/.test(lc)) botReply("Goodbye! Come back soon.");
+      else {
+        if(lc.length < 40) botReply(`You said: "${text}". Tell me more or try /help.`);
+        else botReply("Nice! I like that. I'm learning to respond to longer messages soon.");
+      }
+    }
+
+    // Quiz mini-game
+    const QUIZ = [
+      {q: "What is the capital of France?", a: "paris"},
+      {q: "2 + 2 = ?", a: "4"},
+      {q: "Which planet is known as the Red Planet?", a: "mars"},
+      {q: "What color do you get by mixing red and blue?", a: "purple"}
+    ];
+    function startQuiz(){
+      botState.quizActive = true;
+      botState.score = 0;
+      botState.currentQuestion = 0;
+      clearMessages();
+      appendMessage({ fromName:'Bot', fromUid:'bot', text: 'Quiz started! Answer the questions. Type /quit to stop.', ts: Date.now() }, false);
+      askQuizQuestion();
+    }
+    function askQuizQuestion(){
+      const i = botState.currentQuestion;
+      if(i >= QUIZ.length){
+        botReply(`Quiz finished! Your score: ${botState.score}/${QUIZ.length}`);
+        botState.quizActive = false;
+        return;
+      }
+      botReply(QUIZ[i].q);
+    }
+    function handleQuizAnswer(text){
+      if(text.trim().toLowerCase() === '/quit'){ botReply('Quiz aborted.'); botState.quizActive=false; return; }
+      const i = botState.currentQuestion;
+      const correct = QUIZ[i].a.toLowerCase();
+      if(text.trim().toLowerCase() === correct){ botReply('Correct 🎉'); botState.score++; }
+      else botReply(`Not quite. Correct answer: ${QUIZ[i].a}`);
+      botState.currentQuestion++;
+      setTimeout(()=>askQuizQuestion(), 700);
+    }
+
+    /* ------------------- Friends mode (WebSocket) ------------------- */
+    function startFriendsMode(){
+      clearMessages();
+      chatTitle.textContent = `Friends mode`;
+      subTitle.textContent = `You: ${me.name}`;
+      showStatus('Connecting to server...');
+      msgForm.classList.add('hidden');
+      leaveBtn.classList.remove('hidden');
+      quizBtn.classList.add('hidden');
+      try {
+        ws = new WebSocket(WS_URL);
+      } catch (e) {
+        showStatus('Bad WS_URL. Check assets or use Bot mode.');
+        addSystem('Failed to connect to server.');
+        leaveBtn.classList.remove('hidden');
+        return;
+      }
+      ws.addEventListener('open', ()=> {
+        showStatus('Connected. Identifying...');
+        ws.send(JSON.stringify({ type: 'identify', uid: me.uid, name: me.name }));
+      });
+      ws.addEventListener('message', ev => {
+        let d; try{ d = JSON.parse(ev.data); } catch(e){ return; }
+        if(d.type === 'presence'){ onlineList = d.list || []; renderPresence(); showStatus('Online list updated'); }
+        else if(d.type === 'identified'){ showStatus('Connected as ' + d.name); msgForm.classList.remove('hidden'); }
+        else if(d.type === 'message'){
+          if(currentChat && d.room === currentChat.roomId){
+            appendMessage({ fromName: d.msg.fromName, fromUid: d.msg.fromUid, text: d.msg.text, ts: d.msg.ts }, d.msg.fromUid === me.uid);
+          } else {
+            addSystem(`New message from ${d.msg.fromName}. Click their name to open chat.`);
+          }
+        } else if(d.type === 'error'){
+          addSystem('Server error: ' + d.message);
+        } else if(d.type === 'history'){
+          if(currentChat && d.room === currentChat.roomId){
+            messagesEl.innerHTML=''; d.messages.forEach(m => appendMessage({ fromName:m.fromName, fromUid:m.fromUid, text:m.text, ts:m.ts }, m.fromUid === me.uid));
+          }
+        }
+      });
+      ws.addEventListener('close', ()=> { showStatus('Disconnected from server'); addSystem('Disconnected'); msgForm.classList.add('hidden'); });
+      ws.addEventListener('error', ()=> { showStatus('Connection error'); addSystem('Unable to connect to server'); });
+    }
+
+    function disconnectWs(){
+      if(ws){ try{ ws.close(); }catch(e){} ws = null; }
+      onlineList = [];
+      renderPresence();
+      msgForm.classList.add('hidden');
+      leaveBtn.classList.add('hidden');
+      showStatus('Left friends mode.');
+    }
+
+    function renderPresence(){
+      usersListEl.innerHTML = '';
+      for(const u of onlineList){
+        const li = document.createElement('li');
+        const avatar = document.createElement('div'); avatar.className='userAvatar'; avatar.textContent = initials(u.name);
+        const meta = document.createElement('div'); meta.style.flex='1';
+        const n = document.createElement('div'); n.textContent = u.name + (u.uid === me.uid ? ' (you)' : '');
+        const s = document.createElement('div'); s.className = 'muted small'; s.textContent = u.uid === me.uid ? `id ${uidShort(u.uid)}` : 'online';
+        meta.appendChild(n); meta.appendChild(s);
+        li.appendChild(avatar); li.appendChild(meta);
+        if(u.uid !== me.uid){
+          li.style.cursor = 'pointer';
+          li.addEventListener('click', ()=> openChatWith(u.uid, u.name));
+        }
+        usersListEl.appendChild(li);
+      }
+    }
+
+    function openChatWith(uid, name){
+      if(mode !== 'friends' || !ws) return;
+      currentChat = { uid, name, roomId: roomId(me.uid, uid) };
+      chatTitle.textContent = `Chat with ${name}`;
+      subTitle.textContent = `id ${uidShort(uid)}`;
+      messagesEl.innerHTML = '';
+      messagesEl.classList.remove('empty');
+      msgForm.classList.remove('hidden');
+      ws.send(JSON.stringify({ type: 'get_history', room: currentChat.roomId }));
+    }
+
+    // send handling (shared)
+    msgForm.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const text = (msgInput.value || '').trim();
+      if(!text) return;
+      if(mode === 'bot'){
+        appendMessage({ fromName: me.name, fromUid: me.uid, text, ts: Date.now() }, true);
+        msgInput.value = '';
+        if(botState.quizActive) handleQuizAnswer(text);
+        else handleBotInput(text);
+      } else if(mode === 'friends'){
+        if(!currentChat){ addSystem('Select a user to chat with from the left.'); return; }
+        const payload = { type: 'message', toUid: currentChat.uid, fromUid: me.uid, fromName: me.name, text };
+        ws.send(JSON.stringify(payload));
+        appendMessage({ fromName: me.name, fromUid: me.uid, text, ts: Date.now() }, true);
+        msgInput.value = '';
+      }
+    });
+
+    quizBtn.addEventListener('click', () => {
+      if(mode !== 'bot'){ addSystem('Quiz available only in Bot mode'); return; }
+      startQuiz();
+    });
+
+    function resetUI(){
+      clearMessages();
+      chatTitle.textContent = 'Not connected';
+      subTitle.textContent = 'Choose mode and start';
+      showStatus('');
+      usersListEl.innerHTML = '';
+      msgForm.classList.add('hidden');
+      quizBtn.classList.remove('hidden');
+      leaveBtn.classList.add('hidden');
+      botState.quizActive = false;
+      onlineList = [];
+    }
+
+    // init (default)
+    resetUI();
+  </script>
 </body>
 </html>
